@@ -1,20 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- add onclick listener to radio buttons to keep track of the state -->
+<!-- replace edit texts (except for name) with something else where the user doesn't have to type -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-    <TextView
+    <GridLayout
+        android:layout_marginTop="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/enter_name"
+        android:columnCount="2">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_name"
+            />
+        <EditText
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/et_fullname"
+            android:autofillHints="FirstName LastName" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_sex"
+            />
+
+        <RadioGroup
+            android:id="@+id/rgSex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/rbSexMale"
+                android:layout_width="45dp"
+                android:layout_height="33dp"
+                android:text="M"
+                />
+            <RadioButton
+                android:id="@+id/rbSexFemale"
+                android:layout_width="45dp"
+                android:layout_height="33dp"
+                android:text="F"
+                />
+        </RadioGroup>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_age"
+            />
+        <EditText
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/etAge"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_height"
+            />
+        <EditText
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/etHeight"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_weight"
+            />
+        <EditText
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/etWeight"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_location"
+            />
+        <EditText
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/etLocation"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_activity_level"
+            />
+        <Spinner
+            android:id="@+id/spActivityLevel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
         />
-    <EditText
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:id="@+id/et_fullname"
-        android:autofillHints="FirstName LastName" />
+    </GridLayout>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

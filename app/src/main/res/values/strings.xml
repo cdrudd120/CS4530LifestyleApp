@@ -1,7 +1,29 @@
 <resources>
     <string name="app_name">CS4530LifestyleApp</string>
+
     <string name="enter_name">Enter Name:</string>
+    <string name="enter_age">Age:</string>
+    <string name="enter_sex">Sex:</string>
+    <string name="enter_weight">Weight:</string>
+    <string name="enter_height">Height:</string>
+    <string name="enter_location">Location:</string>
+    <string name="enter_activity_level">Activity Level:</string>
     <string name="submit">Submit</string>
+
     <string name="first_name">First Name:</string>
     <string name="last_name">Last Name:</string>
+    <string name="age">Age:</string>
+    <string name="sex">Sex:</string>
+    <string name="weight">Weight:</string>
+    <string name="height">Height:</string>
+    <string name="location">Location:</string>
+    <string name="activity_level">Activity Level:</string>
+    <string-array name="array_activity_level">
+        <item>Sedentary: little or no exercise</item>
+        <item>Exercise 1-3 times/week</item>
+        <item>Exercise 4-5 times/week</item>
+        <item>Daily exercise or intense exercise 3-4 times/week</item>
+        <item>Intense exercise 6-7 times/week</item>
+        <item>Very intense exercise daily, or physical job</item>
+    </string-array>
 </resources>
