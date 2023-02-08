@@ -1,7 +1,7 @@
 package com.example.cs4530lifestyleapp
 
 import android.content.Context
-import com.example.cs4530lifestyleapp.SubmitFragment.DataPassingInterface
+import com.example.cs4530lifestyleapp.DetailsFragment.DataPassingInterface
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.os.Bundle
@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import java.lang.ClassCastException
 
 
-class SubmitFragment : Fragment(), View.OnClickListener {
+class DetailsFragment : Fragment(), View.OnClickListener {
     // TODO: create variables for all form elements
     private var mEtFullName: EditText? = null
     private var mBtSubmit: Button? = null

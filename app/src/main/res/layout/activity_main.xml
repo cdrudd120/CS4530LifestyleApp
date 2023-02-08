@@ -1,151 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:orientation="vertical"
     tools:context=".MainActivity">
-
-    <androidx.fragment.app.FragmentContainerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/fl_frag_container"
-        />
-
-    <GridLayout
-        android:layout_marginTop="8dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:columnCount="2"
-        >
-        <TextView
+        <Button
+            android:id="@+id/btnEditDetails"
             android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginTop="32dp"
+            android:text="Edit Details" />
+        <Button
+            android:id="@+id/btnShowDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginTop="32dp"
+            android:layout_toRightOf="@id/btnEditDetails"
+            android:text="Show Details" />
+        <androidx.fragment.app.FragmentContainerView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/first_name"
-            android:id="@+id/tv_fn_hardcoded"
+            android:id="@+id/fl_frag_container"
+            android:layout_below="@id/btnEditDetails"
             />
-
-        <TextView
-            android:id="@+id/tv_fn_data"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:visibility="visible"
-            tools:text="John" />
-        <TextView
-            android:layout_marginTop="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/last_name"
-            android:id="@+id/tv_ln_hardcoded"
-            />
-        <TextView
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="Cena"
-            android:id="@+id/tv_ln_data"
-            />
-        <TextView
-            android:layout_marginTop="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/age"
-            android:id="@+id/tv_age_hardcoded"
-            />
-        <TextView
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="21"
-            android:id="@+id/tv_age_data"
-            />
-        <TextView
-            android:layout_marginTop="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sex"
-            android:id="@+id/tv_sex_hardcoded"
-            />
-        <TextView
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="Male"
-            android:id="@+id/tv_sex_data"
-            />
-        <TextView
-            android:layout_marginTop="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/weight"
-            android:id="@+id/tv_weight_hardcoded"
-            />
-        <TextView
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="155lbs"
-            android:id="@+id/tv_weight_data"
-            />
-        <TextView
-            android:layout_marginTop="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/height"
-            android:id="@+id/tv_height_hardcoded"
-            />
-        <TextView
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="68in"
-            android:id="@+id/tv_height_data"
-            />
-        <TextView
-            android:layout_marginTop="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/location"
-            android:id="@+id/tv_location_hardcoded"
-            />
-        <TextView
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="21"
-            android:id="@+id/tv_location_data"
-            />
-        <TextView
-            android:layout_marginTop="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/activity_level"
-            android:id="@+id/tv_activityLevel_hardcoded"
-            />
-        <TextView
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="21"
-            android:id="@+id/tv_activityLevel_data"
-            />
-    </GridLayout>
-    <Button
-        android:id="@+id/btnEditDetails"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_marginTop="32dp"
-        android:layout_below="@id/tv_ln_hardcoded"
-        android:layout_alignParentLeft="true"
-        android:text="Edit Details" />
-</LinearLayout>
+</RelativeLayout>
