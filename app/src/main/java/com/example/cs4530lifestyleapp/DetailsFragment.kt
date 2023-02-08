@@ -25,8 +25,8 @@ class DetailsFragment : Fragment(), View.OnClickListener {
     private var mStringFullName: String? = null
     private var spActivityLevel: Spinner? = null
 
-    var mDataPasser: DataPassingInterface? = null
-    var DataArray: Array<String?> = Array(7, {null})
+    private var mDataPasser: DataPassingInterface? = null
+    private var DataArray: Array<String?> = Array(7, {null})
 
     //Callback interface
     interface DataPassingInterface {

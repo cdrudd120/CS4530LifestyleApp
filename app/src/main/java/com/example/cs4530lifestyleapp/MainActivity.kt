@@ -38,9 +38,11 @@ class MainActivity : AppCompatActivity(), DataPassingInterface, View.OnClickList
         // TODO: read all form data, not just the name. Save data to local variables like we do with the name already
         mStringFirstName = data!![0]
         mStringLastName = data[1]
+        print("LAST NAME " + mStringLastName)
         mSex = data[2]
         mWeight = data[3]
         mAge = data[4]
+        print("AGE " + mAge)
 
         btnEditDetails!!.setEnabled(true);
     }

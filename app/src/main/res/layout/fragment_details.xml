@@ -15,17 +15,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/enter_name"
+            android:layout_margin="12dp"
             />
         <EditText
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/et_fullname"
-            android:autofillHints="FirstName LastName" />
+            android:autofillHints="FirstName LastName"
+            android:layout_margin="12dp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/enter_sex"
+            android:layout_margin="12dp"
             />
 
         <RadioGroup
@@ -38,74 +41,92 @@
                 android:layout_width="45dp"
                 android:layout_height="33dp"
                 android:text="M"
+                android:layout_margin="12dp"
                 />
             <RadioButton
                 android:id="@+id/rbSexFemale"
                 android:layout_width="45dp"
                 android:layout_height="33dp"
                 android:text="F"
+                android:layout_margin="12dp"
                 />
         </RadioGroup>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/enter_age"
+            android:layout_margin="12dp"
             />
         <EditText
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/etAge"
+            android:layout_margin="12dp"
             />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/enter_height"
+            android:layout_margin="12dp"
             />
         <EditText
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/etHeight"
+            android:layout_margin="12dp"
+
             />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/enter_weight"
+            android:layout_margin="12dp"
             />
         <EditText
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/etWeight"
+            android:layout_margin="12dp"
             />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/enter_location"
+            android:layout_margin="12dp"
             />
         <EditText
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/etLocation"
+            android:layout_margin="12dp"
             />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/enter_activity_level"
+            android:layout_margin="12dp"
             />
+
         <Spinner
             android:id="@+id/spActivityLevel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:backgroundTint="@color/cardview_dark_background"
+            />
         />
     </GridLayout>
+
     <Button
+        android:id="@+id/button_submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/submit"
-        android:id="@+id/button_submit"
+        android:layout_margin="12dp"
         />
 
 </LinearLayout>

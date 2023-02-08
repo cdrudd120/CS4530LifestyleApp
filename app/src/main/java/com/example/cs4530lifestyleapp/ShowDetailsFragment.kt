@@ -31,9 +31,9 @@ class ShowDetailsFragment : Fragment() {
         //Get the text views
         tvFirstName = view.findViewById<View>(R.id.tv_fn_data) as TextView
         tvLastName = view.findViewById<View>(R.id.tv_ln_data) as TextView
-        tvAge = view.findViewById<View>(R.id.tv_ln_data) as TextView
+        tvAge = view.findViewById<View>(R.id.tv_age_data) as TextView
         tvSex = view.findViewById<View>(R.id.tv_sex_data) as TextView
-        tvWeight = view.findViewById<View>(R.id.tv_age_data) as TextView
+        tvWeight = view.findViewById<View>(R.id.tv_weight_data) as TextView
         tvHeight = view.findViewById<View>(R.id.tv_height_data) as TextView
         tvLocation = view.findViewById<View>(R.id.tv_location_data) as TextView
         tvActivityLevel = view.findViewById<View>(R.id.tv_activityLevel_data) as TextView
@@ -49,31 +49,16 @@ class ShowDetailsFragment : Fragment() {
         val location = incomingBundle!!.getString("LOCATION_DATA")
         val activityLevel = incomingBundle!!.getString("ACTIVITYLEVEL_DATA")
 
-        //Set the data
-        if (firstName != null) {
-            tvFirstName!!.text = firstName
-        }
-        if (lastName != null) {
-            tvLastName!!.text = lastName
-        }
-        if (age != null) {
-            tvAge!!.text = age
-        }
-        if (sex != null) {
-            tvSex!!.text = sex
-        }
-        if (weight != null) {
-            tvWeight!!.text = weight
-        }
-        if (height != null) {
-            tvHeight!!.text = height
-        }
-        if (location != null) {
-            tvLocation!!.text = location
-        }
-        if (activityLevel != null) {
-            tvActivityLevel!!.text = activityLevel
-        }
+
+        tvFirstName!!.text = firstName
+        tvLastName!!.text = lastName
+        tvAge!!.text = age
+        tvSex!!.text = sex
+        tvWeight!!.text = weight
+        tvHeight!!.text = height
+        tvLocation!!.text = location
+        tvActivityLevel!!.text = activityLevel
+
         return view
     }
 }
