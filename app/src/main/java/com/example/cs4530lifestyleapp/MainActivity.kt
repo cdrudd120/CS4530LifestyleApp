@@ -35,9 +35,9 @@ class MainActivity : AppCompatActivity(), DataPassingInterface, View.OnClickList
     }
 
     override fun passData(data: Array<String?>?) {
-        // TODO: read all form data, not just the name. Save data to local variables like we do with the name already
         mStringFirstName = data!![0]
         mStringLastName = data!![1]
+        activityLevel = data!![2]
     }
 
     override fun onClick(view: View) {
@@ -46,6 +46,17 @@ class MainActivity : AppCompatActivity(), DataPassingInterface, View.OnClickList
                 killFragment()
 
                 val detailsFragment = DetailsFragment()
+
+                val sentData = Bundle()
+                sentData.putString("FN_DATA", mStringFirstName)
+                sentData.putString("LN_DATA", mStringLastName)
+                sentData.putString("AGE_DATA", age)
+                sentData.putString("SEX_DATA", sex)
+                sentData.putString("HEIGHT_DATA", height)
+                sentData.putString("WEIGHT_DATA", weight)
+                sentData.putString("LOCATION_DATA", location)
+                sentData.putString("ACTIVITYLEVEL_DATA", activityLevel)
+                detailsFragment.arguments = sentData
 
                 val fTrans = supportFragmentManager.beginTransaction()
                 fTrans.replace(R.id.fl_frag_container, detailsFragment, "submit_frag")
@@ -78,15 +89,5 @@ class MainActivity : AppCompatActivity(), DataPassingInterface, View.OnClickList
         getSupportFragmentManager().findFragmentByTag("submit_frag")?.let {
             getSupportFragmentManager().beginTransaction().remove(it).commit()
         };
-    }
-
-    fun enableButtons() {
-        btnShowDetails!!.setEnabled(true)
-        btnEditDetails!!.setEnabled(true)
-    }
-
-    fun disableButtons() {
-        btnShowDetails!!.setEnabled(false)
-        btnEditDetails!!.setEnabled(false)
     }
 }
