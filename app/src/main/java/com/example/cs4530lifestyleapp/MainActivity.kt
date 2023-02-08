@@ -16,12 +16,12 @@ class MainActivity : AppCompatActivity(), DataPassingInterface, View.OnClickList
     // Variables to store data in so we can keep it.
     private var mStringFirstName: String? = null
     private var mStringLastName: String? = null
-    private var weight: String? = null
-    private var height: String? = null
-    private var activityLevel: String? = null
-    private var age: String? = null
-    private var location: String? = null
-    private var sex: String? = null
+    private var mWeight: String? = null
+    private var mHeight: String? = null
+    private var mActivityLevel: String? = null
+    private var mAge: String? = null
+    private var mLocation: String? = null
+    private var mSex: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,9 +35,14 @@ class MainActivity : AppCompatActivity(), DataPassingInterface, View.OnClickList
     }
 
     override fun passData(data: Array<String?>?) {
+        // TODO: read all form data, not just the name. Save data to local variables like we do with the name already
         mStringFirstName = data!![0]
-        mStringLastName = data!![1]
-        activityLevel = data!![2]
+        mStringLastName = data[1]
+        mSex = data[2]
+        mWeight = data[3]
+        mAge = data[4]
+
+        btnEditDetails!!.setEnabled(true);
     }
 
     override fun onClick(view: View) {
@@ -50,12 +55,12 @@ class MainActivity : AppCompatActivity(), DataPassingInterface, View.OnClickList
                 val sentData = Bundle()
                 sentData.putString("FN_DATA", mStringFirstName)
                 sentData.putString("LN_DATA", mStringLastName)
-                sentData.putString("AGE_DATA", age)
-                sentData.putString("SEX_DATA", sex)
-                sentData.putString("HEIGHT_DATA", height)
-                sentData.putString("WEIGHT_DATA", weight)
-                sentData.putString("LOCATION_DATA", location)
-                sentData.putString("ACTIVITYLEVEL_DATA", activityLevel)
+                sentData.putString("AGE_DATA", mAge)
+                sentData.putString("SEX_DATA", mSex)
+                sentData.putString("HEIGHT_DATA", mHeight)
+                sentData.putString("WEIGHT_DATA", mWeight)
+                sentData.putString("LOCATION_DATA", mLocation)
+                sentData.putString("ACTIVITYLEVEL_DATA", mActivityLevel)
                 detailsFragment.arguments = sentData
 
                 val fTrans = supportFragmentManager.beginTransaction()
@@ -70,12 +75,12 @@ class MainActivity : AppCompatActivity(), DataPassingInterface, View.OnClickList
                 val sentData = Bundle()
                 sentData.putString("FN_DATA", mStringFirstName)
                 sentData.putString("LN_DATA", mStringLastName)
-                sentData.putString("AGE_DATA", age)
-                sentData.putString("SEX_DATA", sex)
-                sentData.putString("HEIGHT_DATA", height)
-                sentData.putString("WEIGHT_DATA", weight)
-                sentData.putString("LOCATION_DATA", location)
-                sentData.putString("ACTIVITYLEVEL_DATA", activityLevel)
+                sentData.putString("AGE_DATA", mAge)
+                sentData.putString("SEX_DATA", mSex)
+                sentData.putString("HEIGHT_DATA", mHeight)
+                sentData.putString("WEIGHT_DATA", mWeight)
+                sentData.putString("LOCATION_DATA", mLocation)
+                sentData.putString("ACTIVITYLEVEL_DATA", mActivityLevel)
                 showDetailsFragment.arguments = sentData
 
                 val fTrans = supportFragmentManager.beginTransaction()
