@@ -80,14 +80,26 @@
             android:text="@string/weight"
             android:id="@+id/tv_weight_hardcoded"
             />
-        <TextView
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="155lbs"
-            android:id="@+id/tv_weight_data"
-            />
+        <RelativeLayout>
+            <TextView
+                android:id="@+id/tv_weight_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="8dp"
+                tools:text="155"
+                android:layout_weight="1"
+                />
+            <TextView
+                android:id="@+id/tv_weight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="8dp"
+                android:text="lbs"
+                android:layout_toRightOf="@id/tv_weight_data"
+                />
+        </RelativeLayout>
         <TextView
             android:layout_marginTop="8dp"
             android:layout_width="wrap_content"
@@ -95,14 +107,43 @@
             android:text="@string/height"
             android:id="@+id/tv_height_hardcoded"
             />
-        <TextView
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="68in"
-            android:id="@+id/tv_height_data"
-            />
+        <RelativeLayout>
+            <TextView
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="6"
+                android:id="@+id/tv_height_feet_data"
+                />
+            <TextView
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Feet"
+                android:id="@+id/tv_height_feet"
+                android:layout_toRightOf="@+id/tv_height_feet_data"
+                />
+            <TextView
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="6"
+                android:id="@+id/tv_height_inches_data"
+                android:layout_toRightOf="@+id/tv_height_feet"
+                />
+            <TextView
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Inches"
+                android:id="@+id/tv_height_inches"
+                android:layout_toRightOf="@+id/tv_height_inches_data"
+                />
+        </RelativeLayout>
         <TextView
             android:layout_marginTop="8dp"
             android:layout_width="wrap_content"

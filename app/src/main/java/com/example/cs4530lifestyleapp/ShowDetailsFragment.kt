@@ -15,7 +15,8 @@ class ShowDetailsFragment : Fragment() {
     private var tvAge: TextView? = null
     private var tvSex: TextView? = null
     private var tvWeight: TextView? = null
-    private var tvHeight: TextView? = null
+    private var tvHeightFeet: TextView? = null
+    private var tvHeightInches: TextView? = null
     private var tvLocation: TextView? = null
     private var tvActivityLevel: TextView? = null
 
@@ -33,7 +34,8 @@ class ShowDetailsFragment : Fragment() {
         tvAge = view.findViewById<View>(R.id.tv_age_data) as TextView
         tvSex = view.findViewById<View>(R.id.tv_sex_data) as TextView
         tvWeight = view.findViewById<View>(R.id.tv_weight_data) as TextView
-        tvHeight = view.findViewById<View>(R.id.tv_height_data) as TextView
+        tvHeightFeet = view.findViewById<View>(R.id.tv_height_feet_data) as TextView
+        tvHeightInches = view.findViewById<View>(R.id.tv_height_inches_data) as TextView
         tvLocation = view.findViewById<View>(R.id.tv_location_data) as TextView
         tvActivityLevel = view.findViewById<View>(R.id.tv_activityLevel_data) as TextView
 
@@ -54,7 +56,8 @@ class ShowDetailsFragment : Fragment() {
         tvAge!!.text = age
         tvSex!!.text = sex
         tvWeight!!.text = weight
-        tvHeight!!.text = height
+        tvHeightFeet!!.text = (Math.floorDiv(height!!.toInt(), 12)).toString()
+        tvHeightInches!!.text = (height!!.toInt() % 12).toString()
         tvLocation!!.text = location
         tvActivityLevel!!.text = activityLevel
 

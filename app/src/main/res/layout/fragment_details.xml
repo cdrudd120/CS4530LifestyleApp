@@ -57,40 +57,82 @@
             android:text="@string/enter_age"
             android:layout_margin="12dp"
             />
-        <EditText
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/etAge"
-            android:layout_margin="12dp"
-            />
+        <RelativeLayout>
+            <NumberPicker
+                android:id="@+id/npAge"
+                android:layout_width="50dp"
+                android:layout_height="70dp"
+                android:layout_weight="1"/>
+            <TextView
+                android:id="@+id/tvYears"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Years"
+                android:layout_toRightOf="@+id/npAge"
+                android:layout_margin="12dp"
+                android:layout_centerInParent="true"
+                />
+        </RelativeLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/enter_height"
             android:layout_margin="12dp"
             />
-        <EditText
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/etHeight"
-            android:layout_margin="12dp"
-
-            />
+        <RelativeLayout
+            >
+            <NumberPicker
+                android:id="@+id/npHeightFeet"
+                android:layout_width="50dp"
+                android:layout_height="70dp"
+                android:layout_weight="1"/>
+            <TextView
+                android:id="@+id/tvHeightFeet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Feet"
+                android:layout_toRightOf="@+id/npHeightFeet"
+                android:layout_margin="12dp"
+                android:layout_centerInParent="true"
+                />
+            <NumberPicker
+                android:id="@+id/npHeightInches"
+                android:layout_toRightOf="@+id/tvHeightFeet"
+                android:layout_width="50dp"
+                android:layout_height="70dp"
+                android:layout_weight="1"/>
+            <TextView
+                android:id="@+id/tvHeightInches"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Inches"
+                android:layout_toRightOf="@+id/npHeightInches"
+                android:layout_margin="12dp"
+                android:layout_centerInParent="true"
+                />
+        </RelativeLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/enter_weight"
             android:layout_margin="12dp"
             />
-        <EditText
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/etWeight"
-            android:layout_margin="12dp"
-            />
+        <RelativeLayout>
+            <NumberPicker
+                android:id="@+id/npWeight"
+                android:layout_width="50dp"
+                android:layout_height="70dp"
+                android:layout_weight="1"/>
+            <TextView
+                android:id="@+id/tvWeight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="lbs"
+                android:layout_toRightOf="@+id/npWeight"
+                android:layout_margin="12dp"
+                android:layout_centerInParent="true"
+                />
+        </RelativeLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

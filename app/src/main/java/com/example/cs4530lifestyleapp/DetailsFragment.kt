@@ -1,24 +1,22 @@
 package com.example.cs4530lifestyleapp
 
 import android.content.Context
-import com.example.cs4530lifestyleapp.DetailsFragment.DataPassingInterface
-import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
-import com.example.cs4530lifestyleapp.R
 import androidx.fragment.app.Fragment
-import java.lang.ClassCastException
 
 
 class DetailsFragment : Fragment(), View.OnClickListener {
-    private var mWeight: EditText? = null
-    private var mHeight: EditText? = null
+    private var mWeight: NumberPicker? = null
+    private var mHeightFeet: NumberPicker? = null
+    private var mHeightInches: NumberPicker? = null
     private var mSex: RadioGroup? = null
     private var rbSexMale: RadioButton? = null
     private var rbSexFemale: RadioButton? = null
-    private var mAge: EditText? = null
+    private var mAge: NumberPicker? = null
     private var mLocation: EditText? = null
 
     private var mEtFullName: EditText? = null
@@ -52,13 +50,36 @@ class DetailsFragment : Fragment(), View.OnClickListener {
         val view = inflater.inflate(R.layout.fragment_details, container, false)
 
         mEtFullName = view.findViewById(R.id.et_fullname) as EditText
-        mWeight = view.findViewById(R.id.etWeight) as EditText
+        mWeight = view.findViewById(R.id.npWeight) as NumberPicker
         mSex = view.findViewById(R.id.rgSex) as RadioGroup
         rbSexMale = view.findViewById(R.id.rbSexMale) as RadioButton
         rbSexFemale = view.findViewById(R.id.rbSexFemale) as RadioButton
-        mAge = view.findViewById(R.id.etAge) as EditText
-        mHeight = view.findViewById(R.id.etHeight) as EditText
+        mAge = view.findViewById(R.id.npAge) as NumberPicker
+        mHeightFeet = view.findViewById(R.id.npHeightFeet) as NumberPicker
+        mHeightInches = view.findViewById(R.id.npHeightInches) as NumberPicker
         mLocation = view.findViewById(R.id.etLocation) as EditText
+
+        // Setup age number picker
+        mAge!!.minValue = 0
+        mAge!!.maxValue = 120
+        mAge!!.wrapSelectorWheel = true
+        mAge!!.setValue(30)
+
+        //Setup height number pickers
+        mHeightFeet!!.minValue = 2
+        mHeightFeet!!.maxValue = 8
+        mHeightFeet!!.wrapSelectorWheel = true
+        mHeightInches!!.minValue = 0
+        mHeightInches!!.maxValue = 11
+        mHeightInches!!.wrapSelectorWheel = true
+        mHeightFeet!!.setValue(5)
+        mHeightInches!!.setValue(8)
+
+        // Setup weight number picker
+        mWeight!!.minValue = 0
+        mWeight!!.maxValue = 600
+        mWeight!!.wrapSelectorWheel = true
+        mWeight!!.setValue(170)
 
         mBtSubmit = view.findViewById(R.id.button_submit) as Button
         spActivityLevel = view.findViewById(R.id.spActivityLevel) as Spinner
@@ -80,18 +101,18 @@ class DetailsFragment : Fragment(), View.OnClickListener {
             mEtFullName!!.setText(firstName + " " + lastName)
         }
         if (age != null) {
-            mAge!!.setText(age)
+            mAge!!.setValue(age.toInt());
         }
-        if (sex == "Male") {
-            rbSexMale!!.setChecked(true)
-        } else if (sex == "Female") {
+        rbSexMale!!.setChecked(true)
+        if (sex == "Female") {
             rbSexFemale!!.setChecked(true)
         }
         if (weight != null) {
-            mWeight!!.setText(weight)
+            mWeight!!.setValue(weight.toInt())
         }
         if (height != null) {
-            mHeight!!.setText(height)
+            mHeightFeet!!.setValue(Math.floorDiv(height.toInt(), 12))
+            mHeightInches!!.setValue(height.toInt() % 12)
         }
         if (location != null) {
             mLocation!!.setText(location)
@@ -173,14 +194,14 @@ class DetailsFragment : Fragment(), View.OnClickListener {
     }
 
     private fun checkWeight() {
-        val weightString: String? =  mWeight!!.text.toString()
+        val weightString: String? =  mWeight!!.getValue().toString()
         if (weightString != null) {
             DataArray[3] = weightString
         }
     }
 
     private fun checkAge() {
-        val ageString: String? = mAge!!.text.toString()
+        val ageString: String? = mAge!!.getValue().toString()
         if (ageString != null) {
             DataArray[4] = ageString
         }
@@ -192,7 +213,8 @@ class DetailsFragment : Fragment(), View.OnClickListener {
     }
 
     private fun checkHeight() {
-        val height = mHeight!!.text.toString()
+        val intHeight = (mHeightFeet!!.getValue() * 12) + mHeightInches!!.getValue()
+        val height = intHeight.toString()
         if (height != null) {
             DataArray[6] = height
         }
