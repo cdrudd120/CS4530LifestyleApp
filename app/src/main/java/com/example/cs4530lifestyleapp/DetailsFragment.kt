@@ -13,12 +13,13 @@ import java.lang.ClassCastException
 
 
 class DetailsFragment : Fragment(), View.OnClickListener {
-    // TODO: create variables for all form elements
     private var mWeight: EditText? = null
+    private var mHeight: EditText? = null
     private var mSex: RadioGroup? = null
     private var rbSexMale: RadioButton? = null
     private var rbSexFemale: RadioButton? = null
     private var mAge: EditText? = null
+    private var mLocation: EditText? = null
 
     private var mEtFullName: EditText? = null
     private var mBtSubmit: Button? = null
@@ -26,7 +27,7 @@ class DetailsFragment : Fragment(), View.OnClickListener {
     private var spActivityLevel: Spinner? = null
 
     private var mDataPasser: DataPassingInterface? = null
-    private var DataArray: Array<String?> = Array(7, {null})
+    private var DataArray: Array<String?> = Array(8, {null})
 
     //Callback interface
     interface DataPassingInterface {
@@ -50,13 +51,14 @@ class DetailsFragment : Fragment(), View.OnClickListener {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_details, container, false)
 
-
         mEtFullName = view.findViewById(R.id.et_fullname) as EditText
         mWeight = view.findViewById(R.id.etWeight) as EditText
         mSex = view.findViewById(R.id.rgSex) as RadioGroup
         rbSexMale = view.findViewById(R.id.rbSexMale) as RadioButton
         rbSexFemale = view.findViewById(R.id.rbSexFemale) as RadioButton
         mAge = view.findViewById(R.id.etAge) as EditText
+        mHeight = view.findViewById(R.id.etHeight) as EditText
+        mLocation = view.findViewById(R.id.etLocation) as EditText
 
         mBtSubmit = view.findViewById(R.id.button_submit) as Button
         spActivityLevel = view.findViewById(R.id.spActivityLevel) as Spinner
@@ -77,6 +79,23 @@ class DetailsFragment : Fragment(), View.OnClickListener {
         if (firstName != null) {
             mEtFullName!!.setText(firstName + " " + lastName)
         }
+        if (age != null) {
+            mAge!!.setText(age)
+        }
+        if (sex == "Male") {
+            rbSexMale!!.setChecked(true)
+        } else if (sex == "Female") {
+            rbSexFemale!!.setChecked(true)
+        }
+        if (weight != null) {
+            mWeight!!.setText(weight)
+        }
+        if (height != null) {
+            mHeight!!.setText(height)
+        }
+        if (location != null) {
+            mLocation!!.setText(location)
+        }
 
         val spArray = arrayOf("Sedentary: little or no exercise", "Exercise 1-3 times/week", "Exercise 4-5 times/week", "Daily exercise or intense exercise 3-4 times/week", "Intense exercise 6-7 times/week", "Very intense exercise daily, or physical job")
         val adapter: ArrayAdapter<CharSequence> =
@@ -94,7 +113,6 @@ class DetailsFragment : Fragment(), View.OnClickListener {
     override fun onClick(view: View) {
         when (view.id) {
             R.id.button_submit -> {
-                // TODO: Get all other data from the form. This only gets the name field.
                 mStringFullName = mEtFullName!!.text.toString()
 
                 //Check if the Name is empty, it is the only required input field
@@ -107,7 +125,10 @@ class DetailsFragment : Fragment(), View.OnClickListener {
                     checkFirstAndLast()
                     checkSex()
                     checkWeight()
+                    checkHeight()
+                    checkLocation()
                     checkAge()
+                    checkActivityLevel()
                     mDataPasser!!.passData(DataArray)
                 }
             }
@@ -130,8 +151,6 @@ class DetailsFragment : Fragment(), View.OnClickListener {
             Toast.makeText(activity, "Good job!", Toast.LENGTH_SHORT).show()
             DataArray[0] = splitStrings[0]
             DataArray[1] = splitStrings[1]
-            // TODO: When calling passdata method, we need to pass all of the form data, not just the name
-            //mDataPasser!!.passFirstAndLast(splitStrings)
         } else {
             Toast.makeText(
                 activity,
@@ -164,6 +183,25 @@ class DetailsFragment : Fragment(), View.OnClickListener {
         val ageString: String? = mAge!!.text.toString()
         if (ageString != null) {
             DataArray[4] = ageString
+        }
+    }
+
+    private fun checkActivityLevel() {
+        val activityLevel = spActivityLevel!!.getSelectedItem().toString();
+        DataArray[5] = activityLevel
+    }
+
+    private fun checkHeight() {
+        val height = mHeight!!.text.toString()
+        if (height != null) {
+            DataArray[6] = height
+        }
+    }
+
+    private fun checkLocation() {
+        val location = mLocation!!.text.toString()
+        if (location != null) {
+            DataArray[7] = location
         }
     }
 

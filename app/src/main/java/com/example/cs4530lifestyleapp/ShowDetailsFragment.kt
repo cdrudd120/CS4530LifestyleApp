@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import java.lang.ClassCastException
 
 class ShowDetailsFragment : Fragment() {
-    // TODO: create variables for all form elements
     private var tvFirstName: TextView? = null
     private var tvLastName: TextView? = null
     private var tvAge: TextView? = null
