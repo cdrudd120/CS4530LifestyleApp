@@ -24,19 +24,19 @@ class DetailsFragment : Fragment(), View.OnClickListener {
     private var mStringFullName: String? = null
     private var spActivityLevel: Spinner? = null
 
-    private var mDataPasser: DetailsDataPassingInterface? = null
+    private var mDataPasser: DetailsPassing? = null
     private var DataArray: Array<String?> = Array(8, {null})
 
     //Callback interface
-    interface DetailsDataPassingInterface {
-        fun passDataDetails(data: Array<String?>?)
+    interface DetailsPassing {
+        fun detailsCallback(data: Array<String?>?)
     }
 
     //Associate the callback with this Fragment
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mDataPasser = try {
-            context as DetailsDataPassingInterface
+            context as DetailsPassing
         } catch (e: ClassCastException) {
             throw ClassCastException("$context must implement SubmitFragment.DataPassingInterface")
         }
@@ -150,7 +150,7 @@ class DetailsFragment : Fragment(), View.OnClickListener {
                     checkLocation()
                     checkAge()
                     checkActivityLevel()
-                    mDataPasser!!.passDataDetails(DataArray)
+                    mDataPasser!!.detailsCallback(DataArray)
                 }
             }
         }

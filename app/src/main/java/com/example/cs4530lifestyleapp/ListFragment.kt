@@ -10,8 +10,7 @@ import androidx.fragment.app.Fragment
 
 class ListFragment : Fragment(), View.OnClickListener {
 
-    private var mDataPasser: ListDataPassingInterface? = null
-    private var DataArray: Array<String?> = Array(1, {null})
+    private var mDataPasser: ListPassing? = null
 
     private var btnEditDetails: Button? = null
     private var btnDetails: Button? = null
@@ -19,14 +18,14 @@ class ListFragment : Fragment(), View.OnClickListener {
     private var btnWeather: Button? = null
     private var btnBMI: Button? = null
 
-    interface ListDataPassingInterface {
-        fun passDataList(data: Array<String?>?)
+    interface ListPassing {
+        fun buttonsCallback(data: String?)
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mDataPasser = try {
-            context as ListDataPassingInterface
+            context as ListPassing
         } catch (e: ClassCastException) {
             throw ClassCastException("$context must implement SubmitFragment.DataPassingInterface")
         }
@@ -57,24 +56,19 @@ class ListFragment : Fragment(), View.OnClickListener {
     override fun onClick(view: View) {
         when (view.id) {
             R.id.btnShowDetails -> {
-                DataArray[0] = "Details"
-                mDataPasser!!.passDataList(DataArray)
+                mDataPasser!!.buttonsCallback("Details")
             }
             R.id.btnEditDetails -> {
-                DataArray[0] = "Edit"
-                mDataPasser!!.passDataList(DataArray)
+                mDataPasser!!.buttonsCallback("Edit")
             }
             R.id.btnHikes -> {
-                DataArray[0] = "Hikes"
-                mDataPasser!!.passDataList(DataArray)
+                mDataPasser!!.buttonsCallback("Hikes")
             }
             R.id.btnWeather -> {
-                DataArray[0] = "Weather"
-                mDataPasser!!.passDataList(DataArray)
+                mDataPasser!!.buttonsCallback("Weather")
             }
             R.id.btnBMI -> {
-                DataArray[0] = "BMI"
-                mDataPasser!!.passDataList(DataArray)
+                mDataPasser!!.buttonsCallback("BMI")
             }
         }
     }

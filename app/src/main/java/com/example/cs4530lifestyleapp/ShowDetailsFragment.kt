@@ -21,11 +21,11 @@ class ShowDetailsFragment : Fragment(), View.OnClickListener{
     private var tvActivityLevel: TextView? = null
     private var btnBack: Button? = null
 
-    private var mDataPasser: ShowDetailsDataPassingInterface? = null
+    private var mDataPasser: ShowDetailsPassing? = null
 
     //Callback interface
-    interface ShowDetailsDataPassingInterface {
-        fun backFromShowDetails()
+    interface ShowDetailsPassing {
+        fun showDetailsCallback()
     }
 
     override fun onCreateView(
@@ -34,7 +34,7 @@ class ShowDetailsFragment : Fragment(), View.OnClickListener{
     ): View? {
 
         mDataPasser = try {
-            context as ShowDetailsDataPassingInterface
+            context as ShowDetailsPassing
         } catch (e: ClassCastException) {
             throw ClassCastException("$context must implement DataPassingInterface")
         }
@@ -102,7 +102,7 @@ class ShowDetailsFragment : Fragment(), View.OnClickListener{
     override fun onClick(view: View) {
         when (view.id) {
             R.id.buttonBack -> {
-                mDataPasser!!.backFromShowDetails()
+                mDataPasser!!.showDetailsCallback()
             }
         }
     }

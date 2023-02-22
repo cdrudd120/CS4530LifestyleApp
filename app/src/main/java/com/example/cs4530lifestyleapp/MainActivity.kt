@@ -4,16 +4,18 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
-import com.example.cs4530lifestyleapp.DetailsFragment.DetailsDataPassingInterface
-import com.example.cs4530lifestyleapp.ListFragment.ListDataPassingInterface
-import com.example.cs4530lifestyleapp.ShowDetailsFragment.ShowDetailsDataPassingInterface
+import com.example.cs4530lifestyleapp.DetailsFragment.DetailsPassing
+import com.example.cs4530lifestyleapp.ListFragment.ListPassing
+import com.example.cs4530lifestyleapp.ShowDetailsFragment.ShowDetailsPassing
+import com.example.cs4530lifestyleapp.WeatherFragment.WeatherPassing
+import com.example.cs4530lifestyleapp.BMIFragment.BMIPassing
 
 import android.widget.TextView
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 
-class MainActivity : AppCompatActivity(), DetailsDataPassingInterface, ListDataPassingInterface, ShowDetailsDataPassingInterface {
+class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetailsPassing, WeatherPassing, BMIPassing {
     // Variables to store data in so we can keep it.
     private var mStringFirstName: String? = null
     private var mStringLastName: String? = null
@@ -28,10 +30,10 @@ class MainActivity : AppCompatActivity(), DetailsDataPassingInterface, ListDataP
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        showButtonFragment()
+        displayButtonFragment()
     }
 
-    private fun showButtonFragment() {
+    private fun displayButtonFragment() {
         killFragment()
 
         val buttonFragment = ListFragment()
@@ -41,7 +43,7 @@ class MainActivity : AppCompatActivity(), DetailsDataPassingInterface, ListDataP
         fTrans.commit()
     }
 
-    private fun showEditDetailsFragment() {
+    private fun displayEditDetailsFragment() {
         killFragment()
 
         val detailsFragment = DetailsFragment()
@@ -62,7 +64,7 @@ class MainActivity : AppCompatActivity(), DetailsDataPassingInterface, ListDataP
         fTrans.commit()
     }
 
-    private fun showDetailsFragment() {
+    private fun displayDetailsFragment() {
         killFragment()
 
         val showDetailsFragment = ShowDetailsFragment()
@@ -83,7 +85,7 @@ class MainActivity : AppCompatActivity(), DetailsDataPassingInterface, ListDataP
         fTrans.commit()
     }
 
-    private fun showHikes() {
+    private fun displayHikes() {
         val searchUri = Uri.parse("geo:40.767778,-111.845205?q=hikes")
         //Create the implicit intent
         val mapIntent = Intent(Intent.ACTION_VIEW, searchUri)
@@ -95,15 +97,27 @@ class MainActivity : AppCompatActivity(), DetailsDataPassingInterface, ListDataP
         }
     }
 
-    private fun showWeatherFragment() {
+    private fun displayWeatherFragment() {
+        killFragment()
 
+        val weatherFragment = WeatherFragment()
+
+        val fTrans = supportFragmentManager.beginTransaction()
+        fTrans.replace(R.id.fl_frag_container, weatherFragment, "main_tag")
+        fTrans.commit()
     }
 
-    private fun showBMIFragment() {
+    private fun displayBMIFragment() {
+        killFragment()
 
+        val bmiFragment = BMIFragment()
+
+        val fTrans = supportFragmentManager.beginTransaction()
+        fTrans.replace(R.id.fl_frag_container, bmiFragment, "main_tag")
+        fTrans.commit()
     }
 
-    override fun passDataDetails(data: Array<String?>?) {
+    override fun detailsCallback(data: Array<String?>?) {
         mStringFirstName = data!![0]
         mStringLastName = data[1]
         mSex = data[2]
@@ -113,26 +127,33 @@ class MainActivity : AppCompatActivity(), DetailsDataPassingInterface, ListDataP
         mHeight = data[6]
         mLocation = data[7]
 
-        showButtonFragment()
+        displayButtonFragment()
     }
 
-    override fun backFromShowDetails() {
-        showButtonFragment()
+    override fun showDetailsCallback() {
+        displayButtonFragment()
     }
 
-    override fun passDataList(data: Array<String?>?) {
-        val buttonClicked = data!![0]
-        if (buttonClicked == "Details") {
-            showDetailsFragment()
-        } else if (buttonClicked == "Hikes") {
-            showHikes()
-        } else if (buttonClicked == "Edit") {
-            showEditDetailsFragment()
-        } else if (buttonClicked == "Weather") {
-            showWeatherFragment()
-        } else if (buttonClicked == "BMI") {
-            showBMIFragment()
+    override fun buttonsCallback(data: String?) {
+        if (data == "Details") {
+            displayDetailsFragment()
+        } else if (data == "Hikes") {
+            displayHikes()
+        } else if (data == "Edit") {
+            displayEditDetailsFragment()
+        } else if (data == "Weather") {
+            displayWeatherFragment()
+        } else if (data == "BMI") {
+            displayBMIFragment()
         }
+    }
+
+    override fun bmiCallback() {
+        displayButtonFragment()
+    }
+
+    override fun weatherCallback() {
+        displayButtonFragment()
     }
 
     fun killFragment() {
