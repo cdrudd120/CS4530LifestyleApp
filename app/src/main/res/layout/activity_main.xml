@@ -6,23 +6,9 @@
     android:layout_height="match_parent"
     android:padding="0dp"
     tools:context=".MainActivity">
-        <Button
-            android:id="@+id/btnEditDetails"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_marginTop="32dp"
-            android:text="Edit Details" />
-        <Button
-            android:id="@+id/btnShowDetails"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_marginTop="32dp"
-            android:layout_toRightOf="@id/btnEditDetails"
-            android:text="Show Details" />
         <androidx.fragment.app.FragmentContainerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/fl_frag_container"
-            android:layout_below="@id/btnEditDetails"
             />
 </RelativeLayout>

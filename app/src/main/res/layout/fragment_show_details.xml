@@ -175,4 +175,11 @@
             android:id="@+id/tv_activityLevel_data"
             />
     </GridLayout>
+    <Button
+        android:id="@+id/buttonBack"
+        android:layout_width="70dp"
+        android:layout_height="50dp"
+        android:text="Back"
+        android:textSize="10dp"
+        android:layout_margin="0dp" />
 </LinearLayout>

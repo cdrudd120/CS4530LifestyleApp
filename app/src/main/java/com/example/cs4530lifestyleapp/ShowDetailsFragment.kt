@@ -9,7 +9,7 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import java.lang.ClassCastException
 
-class ShowDetailsFragment : Fragment() {
+class ShowDetailsFragment : Fragment(), View.OnClickListener{
     private var tvFirstName: TextView? = null
     private var tvLastName: TextView? = null
     private var tvAge: TextView? = null
@@ -19,11 +19,25 @@ class ShowDetailsFragment : Fragment() {
     private var tvHeightInches: TextView? = null
     private var tvLocation: TextView? = null
     private var tvActivityLevel: TextView? = null
+    private var btnBack: Button? = null
+
+    private var mDataPasser: ShowDetailsDataPassingInterface? = null
+
+    //Callback interface
+    interface ShowDetailsDataPassingInterface {
+        fun backFromShowDetails()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        mDataPasser = try {
+            context as ShowDetailsDataPassingInterface
+        } catch (e: ClassCastException) {
+            throw ClassCastException("$context must implement DataPassingInterface")
+        }
 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_show_details, container, false)
@@ -38,6 +52,7 @@ class ShowDetailsFragment : Fragment() {
         tvHeightInches = view.findViewById<View>(R.id.tv_height_inches_data) as TextView
         tvLocation = view.findViewById<View>(R.id.tv_location_data) as TextView
         tvActivityLevel = view.findViewById<View>(R.id.tv_activityLevel_data) as TextView
+        btnBack = view.findViewById<View>(R.id.buttonBack) as Button
 
         //Get the data that was sent in
         val incomingBundle = arguments
@@ -51,16 +66,44 @@ class ShowDetailsFragment : Fragment() {
         val activityLevel = incomingBundle!!.getString("ACTIVITYLEVEL_DATA")
 
 
-        tvFirstName!!.text = firstName
-        tvLastName!!.text = lastName
-        tvAge!!.text = age
-        tvSex!!.text = sex
-        tvWeight!!.text = weight
-        tvHeightFeet!!.text = (Math.floorDiv(height!!.toInt(), 12)).toString()
-        tvHeightInches!!.text = (height!!.toInt() % 12).toString()
-        tvLocation!!.text = location
-        tvActivityLevel!!.text = activityLevel
+        if (firstName != null) {
+            tvFirstName!!.text = firstName
+        }
+        if (lastName != null) {
+            tvLastName!!.text = lastName
+        }
+        if (age != null) {
+            tvAge!!.text = age
+        }
+        if (sex != null) {
+            tvSex!!.text = sex
+        }
+        if (weight != null) {
+            tvWeight!!.text = weight
+        }
+        if (height != null) {
+            tvHeightFeet!!.text = (Math.floorDiv(height!!.toInt(), 12)).toString()
+        }
+        if (height != null) {
+            tvHeightInches!!.text = (height!!.toInt() % 12).toString()
+        }
+        if (location != null) {
+            tvLocation!!.text = location
+        }
+        if (activityLevel != null) {
+            tvActivityLevel!!.text = activityLevel
+        }
+
+        btnBack!!.setOnClickListener(this);
 
         return view
+    }
+
+    override fun onClick(view: View) {
+        when (view.id) {
+            R.id.buttonBack -> {
+                mDataPasser!!.backFromShowDetails()
+            }
+        }
     }
 }
