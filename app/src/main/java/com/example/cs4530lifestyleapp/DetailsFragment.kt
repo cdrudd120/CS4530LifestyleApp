@@ -118,7 +118,7 @@ class DetailsFragment : Fragment(), View.OnClickListener {
             mLocation!!.setText(location)
         }
 
-        val spArray = arrayOf("Sedentary: little or no exercise", "Exercise 1-3 times/week", "Exercise 4-5 times/week", "Daily exercise or intense exercise 3-4 times/week", "Intense exercise 6-7 times/week", "Very intense exercise daily, or physical job")
+        val spArray = arrayOf("Sedentary: little or no exercise", "Exercise 1-3 times/week", "Moderate Exercise 3-5 times/week", "Very Active 6-7 days/wk", "Extremely active (intense exercise/physical job)")
         val adapter: ArrayAdapter<CharSequence> =
             ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, spArray)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)

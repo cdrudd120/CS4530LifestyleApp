@@ -20,6 +20,9 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
+import android.util.Log
+import kotlin.math.roundToInt
+
 
 class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetailsPassing, WeatherPassing, BMIPassing {
     // Variables to store data in so we can keep it.
@@ -34,6 +37,9 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var latitude: String? = null
     private var longtitude: String? = null
+    private var mBMR: String? = null
+    private var mCalorieIntake: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -148,6 +154,11 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
         val bmiFragment = BMIFragment()
 
+        val sentData = Bundle()
+        sentData.putString("BMR_DATA", mBMR)
+        sentData.putString("CALORIEINTAKE_DATA", mCalorieIntake)
+        bmiFragment.arguments=sentData
+
         val fTrans = supportFragmentManager.beginTransaction()
         fTrans.replace(R.id.fl_frag_container, bmiFragment, "main_tag")
         fTrans.commit()
@@ -164,6 +175,36 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
         mLocation = data[7]
 
         displayButtonFragment()
+
+        //calculate BMR
+        if (mSex=="Female"){
+            var BMR = 447.593 + (9.247*(mWeight?.toInt()!!)*0.453592) + (3.098*(mHeight?.toInt()!!)*2.54) + (-4.330*(mAge?.toInt()!!))
+            //Log.d("BMR",BMR.toString())
+            mBMR= BMR.roundToInt().toString()
+        }
+        if (mSex=="Male"){
+            var BMR = 88.362 + (13.397*(mWeight?.toInt()!!)*0.453592) + (4.799*(mHeight?.toInt()!!)*2.54) + (-5.677*(mAge?.toInt()!!))
+            //Log.d("BMR",BMR.toString())
+            mBMR= BMR.roundToInt().toString()
+        }
+
+
+        //calculate ativity Level from https://www.diabetes.co.uk/bmr-calculator.html#:~:text=Harris%20Benedict%20Formula&text=Little%2Fno%20exercise%3A%20BMR%20*,BMR%20*%201.725%20%3D%20Total%20Calorie%20Need
+        if (mActivityLevel=="Sedentary: little or no exercise"){
+            mCalorieIntake=(mBMR!!.toInt()*1.2).roundToInt().toString()
+        }
+        else if (mActivityLevel=="Exercise 1-3 times/week"){
+            mCalorieIntake=(mBMR!!.toInt()*1.375).roundToInt().toString()
+        }
+        else if (mActivityLevel=="Moderate Exercise 3-5 times/week"){
+            mCalorieIntake=(mBMR!!.toInt()*1.55).roundToInt().toString()
+        }
+        else if (mActivityLevel=="Very Active 6-7 days/wk"){
+            mCalorieIntake=(mBMR!!.toInt()*1.725).roundToInt().toString()
+        }
+        else if (mActivityLevel=="Extremely active (intense exercise/physical job)"){
+            mCalorieIntake=(mBMR!!.toInt()*1.9).roundToInt().toString()
+        }
     }
 
     override fun showDetailsCallback() {
