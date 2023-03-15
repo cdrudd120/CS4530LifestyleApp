@@ -1,12 +1,30 @@
 package com.example.cs4530lifestyleapp
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import java.io.File
+import java.io.FileOutputStream
+import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.*
+import android.graphics.BitmapFactory
+import java.util.*
+
+
 
 
 class DetailsFragment : Fragment(), View.OnClickListener {
@@ -21,11 +39,18 @@ class DetailsFragment : Fragment(), View.OnClickListener {
 
     private var mEtFullName: EditText? = null
     private var mBtSubmit: Button? = null
+    private var mCameraButton: Button? = null
     private var mStringFullName: String? = null
     private var spActivityLevel: Spinner? = null
 
     private var mDataPasser: DetailsPassing? = null
     private var DataArray: Array<String?> = Array(8, {null})
+
+    //variable that holds filepath to profilePic
+    private var filePathString: String? =null
+
+    //imageView that holds pic
+    private var mPicView: ImageView? = null
 
     //Callback interface
     interface DetailsPassing {
@@ -84,6 +109,9 @@ class DetailsFragment : Fragment(), View.OnClickListener {
         mBtSubmit = view.findViewById(R.id.button_submit) as Button
         spActivityLevel = view.findViewById(R.id.spActivityLevel) as Spinner
         mBtSubmit!!.setOnClickListener(this)
+
+        mCameraButton = view.findViewById(R.id.photoButton)
+        mCameraButton!!.setOnClickListener(this)
 
         //Get the data that was sent in
         val incomingBundle = arguments
@@ -150,7 +178,17 @@ class DetailsFragment : Fragment(), View.OnClickListener {
                     checkLocation()
                     checkAge()
                     checkActivityLevel()
-                    mDataPasser!!.detailsCallback(DataArray)
+                    mDataPasser!!.detailsCallback(DataArray) //any way to make this a bundle? --need to pass filepath to mainActivity
+                }
+            }
+            //get photo
+            R.id.photoButton -> {
+                //The button press should open a camera
+                val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                try{
+                    displayCameraThumbnail.launch(cameraIntent)
+                }catch(ex: ActivityNotFoundException){
+                    //Do error handling here
                 }
             }
         }
@@ -233,5 +271,51 @@ class DetailsFragment : Fragment(), View.OnClickListener {
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
+    }
+    private val displayCameraThumbnail = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == AppCompatActivity.RESULT_OK) {
+            mPicView = view?.findViewById<View>(R.id.profilePic) as ImageView
+            var thumbnailImage: Bitmap? = null
+            if (Build.VERSION.SDK_INT >= 33) {
+                thumbnailImage = result.data!!.getParcelableExtra("data", Bitmap::class.java)
+                mPicView!!.setImageBitmap(thumbnailImage)
+            }
+            else{
+                thumbnailImage = result.data!!.getParcelableExtra<Bitmap>("data")
+                mPicView!!.setImageBitmap(thumbnailImage)
+            }
+            //Open a file and write to it
+            if (isExternalStorageWritable) {
+                filePathString = savePic(thumbnailImage)
+                Log.i("filePath", filePathString!!)
+            } else {
+                Toast.makeText(activity, "External storage not writable.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private val isExternalStorageWritable: Boolean
+        get() {
+            val state = Environment.getExternalStorageState()
+            return Environment.MEDIA_MOUNTED == state
+        }
+
+    private fun savePic(finalBitmap: Bitmap?): String {
+        val root = activity?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val myDir = File("$root/saved_images")
+        myDir.mkdirs()
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val fname = "Thumbnail_$timeStamp.jpg"
+        val file = File(myDir, fname)
+        if (file.exists()) file.delete()
+        try {
+            val out = FileOutputStream(file)
+            finalBitmap!!.compress(Bitmap.CompressFormat.JPEG, 90, out)
+            out.flush()
+            out.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return file.absolutePath
     }
 }
