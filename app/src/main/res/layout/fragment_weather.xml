@@ -15,11 +15,130 @@
         android:text="Weather"
         />
 
-    <Button
-        android:id="@+id/buttonBack"
-        android:layout_width="70dp"
-        android:layout_height="50dp"
-        android:text="Back"
-        android:textSize="10dp"
-        android:layout_margin="0dp" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/allData">
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/mainData">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_weight="0"
+                android:layout_marginRight="8dp"
+                android:id="@+id/description"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Temperature: "
+                android:layout_weight="1"
+                android:layout_marginRight="8dp"
+                android:id="@+id/temperature"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Feels Like: "
+                android:layout_weight="2"
+                android:layout_marginRight="8dp"
+                android:id="@+id/feelsLike"
+                />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/minMax">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Min: "
+                android:layout_weight="0"
+                android:layout_marginRight="8dp"
+                android:id="@+id/min"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Max: "
+                android:layout_weight="1"
+                android:layout_marginRight="8dp"
+                android:id="@+id/max"
+                />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/other">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Humidity: "
+                android:layout_weight="0"
+                android:layout_marginRight="8dp"
+                android:id="@+id/humidity"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wind Speed: "
+                android:layout_weight="1"
+                android:layout_marginRight="8dp"
+                android:id="@+id/windSpeed"
+                />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/sun">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sunrise: "
+                android:layout_weight="0"
+                android:layout_marginRight="8dp"
+                android:id="@+id/sunrise"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sunset: "
+                android:layout_weight="1"
+                android:layout_marginRight="8dp"
+                android:id="@+id/sunset"
+                />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/buttonBack"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:text="Back"
+            android:textSize="10dp"
+            android:layout_margin="0dp" />
+    </LinearLayout>
+
+
 </LinearLayout>
