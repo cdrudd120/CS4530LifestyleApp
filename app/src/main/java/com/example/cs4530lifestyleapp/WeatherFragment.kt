@@ -8,11 +8,13 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.TextView
 import androidx.core.os.HandlerCompat
 import androidx.fragment.app.Fragment
 import org.json.JSONException
 import org.json.JSONObject
+import java.lang.ref.WeakReference
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -32,6 +34,8 @@ class WeatherFragment: Fragment(), View.OnClickListener{
     private var btnBack: Button? = null
 
     private var mDataPasser: WeatherPassing? = null
+
+    private val mFetchWeather: FetchWeather = FetchWeather()
 
     interface WeatherPassing {
         fun weatherCallback()
@@ -67,7 +71,9 @@ class WeatherFragment: Fragment(), View.OnClickListener{
 
         btnBack!!.setOnClickListener(this)
 
-        FetchWeather().execute("Salt&Lake&City,us")
+        mFetchWeather.setWeakReference(this)
+
+        mFetchWeather.execute(this, "Salt&Lake&City,us")
 
 
         return view
@@ -82,13 +88,17 @@ class WeatherFragment: Fragment(), View.OnClickListener{
     }
 
     private inner class FetchWeather {
+        var weatherFragmentWeakReference: WeakReference<WeatherFragment>? = null
         var executorService: ExecutorService = Executors.newSingleThreadExecutor()
         var mainThreadHandler: Handler = HandlerCompat.createAsync(Looper.getMainLooper())
-        fun execute(location: String?) {
+
+        fun setWeakReference(ref: WeatherFragment) {
+            weatherFragmentWeakReference = WeakReference<WeatherFragment>(ref)
+        }
+        fun execute(location1: WeatherFragment, location: String?) {
             executorService.execute(Runnable {
                 var jsonWeatherData: String?
                 val weatherDataURL = NetworkUtils.buildURLFromString(location)
-                jsonWeatherData = null
                 try {
                     jsonWeatherData = NetworkUtils.getDataFromURL(weatherDataURL)
                     postToMainThread(jsonWeatherData)
@@ -99,6 +109,8 @@ class WeatherFragment: Fragment(), View.OnClickListener{
         }
 
         fun postToMainThread(jsonWeatherData: String?) {
+            val localRef = weatherFragmentWeakReference!!.get()
+
             mainThreadHandler.post(Runnable {
                 if (jsonWeatherData != null) {
                     try {
@@ -114,16 +126,17 @@ class WeatherFragment: Fragment(), View.OnClickListener{
                                 .toTypedArray()
                             myMap[keyValue[0]] = keyValue[1]
                         }
-                        mDescription!!.text = myMap.getValue("\"description\"").removeSurrounding("\"")
+                        localRef!!.mDescription!!.text = myMap.getValue("\"description\"").removeSurrounding("\"")
                         var temperatureObj = jsonObj.getJSONObject("main")
-                        mTemperature!!.text = "Temperature: " + temperatureObj.getString("temp")
-                        mFeelsLike!!.text = "Feels Like: " + temperatureObj.getString("feels_like")
-                        mMin!!.text = "Min: " + temperatureObj.getString("temp_min")
-                        mMax!!.text = "Max: " + temperatureObj.getString("temp_max")
-                        mHumidity!!.text = "Humidity: " + temperatureObj.getString("humidity")
-                        mWindSpeed!!.text = "Wind Speed: " + jsonObj.getJSONObject("wind").getString("speed")
-                        mSunrise!!.text = "Sunrise: " + jsonObj.getJSONObject("sys").getString("sunrise")
-                        mSunset!!.text = "Sunset: " + jsonObj.getJSONObject("sys").getString("sunset")
+                        localRef!!.mTemperature!!.text = "Temperature: " + temperatureObj.getString("temp")
+                        localRef!!.mFeelsLike!!.text = "Feels Like: " + temperatureObj.getString("feels_like")
+                        localRef!!.mMin!!.text = "Min: " + temperatureObj.getString("temp_min")
+                        localRef!!.mMax!!.text = "Max: " + temperatureObj.getString("temp_max")
+                        localRef!!.mHumidity!!.text = "Humidity: " + temperatureObj.getString("humidity")
+                        localRef!!.mWindSpeed!!.text = "Wind Speed: " + jsonObj.getJSONObject("wind").getString("speed")
+                        localRef!!.mSunrise!!.text = "Sunrise: " + jsonObj.getJSONObject("sys").getString("sunrise")
+                        localRef!!.mSunset!!.text = "Sunset: " + jsonObj.getJSONObject("sys").getString("sunset")
+
 
                     } catch (e: JSONException) {
                         e.printStackTrace()
@@ -131,21 +144,6 @@ class WeatherFragment: Fragment(), View.OnClickListener{
                 }
             })
         }
-
-//            mainThreadHandler.post(Runnable {
-//                run {
-//                    if(jsonWeatherData != null){
-//                        try{
-//                            var jsonObj = JSONObject(jsonWeatherData);
-//                            var weatherObj = jsonObj.getJSONObject("weather")
-//                            mDescription = weatherObj.getString("description")
-//                        }catch (e: Exception){
-//                            e.printStackTrace()
-//                        }
-//                    }
-//                }
-//
-//            })
 
     }
 }
