@@ -3,6 +3,7 @@ package com.example.cs4530lifestyleapp
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
@@ -39,11 +40,17 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
     private var mCalorieIntake: String? = null
     private var mImageFilepath: String? = null
 
+    private var tablet: Boolean = false;
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
+        if(getResources().getBoolean(R.bool.isTablet)) {
+            tablet = true;
+        }
 
         updateHeader()
         displayButtonFragment()
@@ -55,7 +62,11 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
         val buttonFragment = ListFragment()
 
         val fTrans = supportFragmentManager.beginTransaction()
-        fTrans.replace(R.id.fl_frag_container, buttonFragment, "main_tag")
+        if (tablet) {
+            fTrans.replace(R.id.fragList, buttonFragment, "button_tag")
+        } else {
+            fTrans.replace(R.id.fl_frag_container, buttonFragment, "main_tag")
+        }
         fTrans.commit()
     }
 
