@@ -1,25 +1,26 @@
 package com.example.cs4530lifestyleapp
 
-import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Bundle
+import android.view.Gravity
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import com.example.cs4530lifestyleapp.BMIFragment.BMIPassing
 import com.example.cs4530lifestyleapp.DetailsFragment.DetailsPassing
 import com.example.cs4530lifestyleapp.ListFragment.ListPassing
 import com.example.cs4530lifestyleapp.ShowDetailsFragment.ShowDetailsPassing
 import com.example.cs4530lifestyleapp.WeatherFragment.WeatherPassing
-import com.example.cs4530lifestyleapp.BMIFragment.BMIPassing
 import com.google.android.gms.location.FusedLocationProviderClient
-
-import android.widget.TextView
-import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
+import kotlin.math.roundToInt
+
 
 class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetailsPassing, WeatherPassing, BMIPassing {
     // Variables to store data in so we can keep it.
@@ -34,12 +35,17 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var latitude: String? = null
     private var longtitude: String? = null
+    private var mBMR: String? = null
+    private var mCalorieIntake: String? = null
+    private var mImageFilepath: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
+        updateHeader()
         displayButtonFragment()
     }
 
@@ -67,6 +73,7 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
         sentData.putString("WEIGHT_DATA", mWeight)
         sentData.putString("LOCATION_DATA", mLocation)
         sentData.putString("ACTIVITYLEVEL_DATA", mActivityLevel)
+        sentData.putString("IMAGE_FILEPATH", mImageFilepath)
         detailsFragment.arguments = sentData
 
         val fTrans = supportFragmentManager.beginTransaction()
@@ -88,6 +95,7 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
         sentData.putString("WEIGHT_DATA", mWeight)
         sentData.putString("LOCATION_DATA", mLocation)
         sentData.putString("ACTIVITYLEVEL_DATA", mActivityLevel)
+        sentData.putString("IMAGE_FILEPATH", mImageFilepath)
         showDetailsFragment.arguments = sentData
 
         val fTrans = supportFragmentManager.beginTransaction()
@@ -148,9 +156,41 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
         val bmiFragment = BMIFragment()
 
+        val sentData = Bundle()
+        sentData.putString("BMR_DATA", mBMR)
+        sentData.putString("CALORIEINTAKE_DATA", mCalorieIntake)
+        bmiFragment.arguments=sentData
+
         val fTrans = supportFragmentManager.beginTransaction()
         fTrans.replace(R.id.fl_frag_container, bmiFragment, "main_tag")
         fTrans.commit()
+    }
+
+    private fun updateHeader() {
+        val actionBar: ActionBar? = supportActionBar
+        actionBar!!.setDisplayOptions(
+            actionBar.getDisplayOptions()
+                    or ActionBar.DISPLAY_SHOW_CUSTOM
+        )
+        actionBar!!.setTitle("Lifestyle App");
+        if (mCalorieIntake != null) {
+            actionBar!!.setSubtitle("Calories: " + mCalorieIntake);
+        }
+
+        val imageView = ImageView(actionBar.getThemedContext())
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER)
+        val profilePicture = BitmapFactory.decodeFile(mImageFilepath)
+        if (profilePicture != null) {
+            imageView.setImageBitmap(profilePicture)
+        }
+        val layoutParams: ActionBar.LayoutParams = ActionBar.LayoutParams(
+            ActionBar.LayoutParams.WRAP_CONTENT,
+            ActionBar.LayoutParams.WRAP_CONTENT, (Gravity.RIGHT
+                    or Gravity.CENTER_VERTICAL)
+        )
+        layoutParams.rightMargin = 0
+        imageView.setLayoutParams(layoutParams)
+        actionBar.setCustomView(imageView)
     }
 
     override fun detailsCallback(data: Array<String?>?) {
@@ -162,8 +202,41 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
         mActivityLevel = data[5]
         mHeight = data[6]
         mLocation = data[7]
+        mImageFilepath = data[8]
 
         displayButtonFragment()
+
+        //calculate BMR
+        if (mSex=="Female"){
+            var BMR = 447.593 + (9.247*(mWeight?.toInt()!!)*0.453592) + (3.098*(mHeight?.toInt()!!)*2.54) + (-4.330*(mAge?.toInt()!!))
+            //Log.d("BMR",BMR.toString())
+            mBMR= BMR.roundToInt().toString()
+        }
+        if (mSex=="Male"){
+            var BMR = 88.362 + (13.397*(mWeight?.toInt()!!)*0.453592) + (4.799*(mHeight?.toInt()!!)*2.54) + (-5.677*(mAge?.toInt()!!))
+            //Log.d("BMR",BMR.toString())
+            mBMR= BMR.roundToInt().toString()
+        }
+
+
+        //calculate ativity Level from https://www.diabetes.co.uk/bmr-calculator.html#:~:text=Harris%20Benedict%20Formula&text=Little%2Fno%20exercise%3A%20BMR%20*,BMR%20*%201.725%20%3D%20Total%20Calorie%20Need
+        if (mActivityLevel=="Sedentary: little or no exercise"){
+            mCalorieIntake=(mBMR!!.toInt()*1.2).roundToInt().toString()
+        }
+        else if (mActivityLevel=="Exercise 1-3 times/week"){
+            mCalorieIntake=(mBMR!!.toInt()*1.375).roundToInt().toString()
+        }
+        else if (mActivityLevel=="Moderate Exercise 3-5 times/week"){
+            mCalorieIntake=(mBMR!!.toInt()*1.55).roundToInt().toString()
+        }
+        else if (mActivityLevel=="Very Active 6-7 days/wk"){
+            mCalorieIntake=(mBMR!!.toInt()*1.725).roundToInt().toString()
+        }
+        else if (mActivityLevel=="Extremely active (intense exercise/physical job)"){
+            mCalorieIntake=(mBMR!!.toInt()*1.9).roundToInt().toString()
+        }
+
+        updateHeader()
     }
 
     override fun showDetailsCallback() {

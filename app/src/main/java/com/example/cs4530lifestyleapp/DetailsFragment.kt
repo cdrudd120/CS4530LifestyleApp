@@ -1,12 +1,30 @@
 package com.example.cs4530lifestyleapp
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import java.io.File
+import java.io.FileOutputStream
+import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.*
+import android.graphics.BitmapFactory
+import java.util.*
+
+
 
 
 class DetailsFragment : Fragment(), View.OnClickListener {
@@ -21,11 +39,18 @@ class DetailsFragment : Fragment(), View.OnClickListener {
 
     private var mEtFullName: EditText? = null
     private var mBtSubmit: Button? = null
+    private var mCameraButton: Button? = null
     private var mStringFullName: String? = null
     private var spActivityLevel: Spinner? = null
 
     private var mDataPasser: DetailsPassing? = null
-    private var DataArray: Array<String?> = Array(8, {null})
+    private var DataArray: Array<String?> = Array(9, {null})
+
+    //variable that holds filepath to profilePic
+    private var filePathString: String? =null
+
+    //imageView that holds pic
+    private var mPicView: ImageView? = null
 
     //Callback interface
     interface DetailsPassing {
@@ -58,6 +83,7 @@ class DetailsFragment : Fragment(), View.OnClickListener {
         mHeightFeet = view.findViewById(R.id.npHeightFeet) as NumberPicker
         mHeightInches = view.findViewById(R.id.npHeightInches) as NumberPicker
         mLocation = view.findViewById(R.id.etLocation) as EditText
+        mPicView = view.findViewById<View>(R.id.profilePic) as ImageView
 
         // Setup age number picker
         mAge!!.minValue = 0
@@ -85,6 +111,9 @@ class DetailsFragment : Fragment(), View.OnClickListener {
         spActivityLevel = view.findViewById(R.id.spActivityLevel) as Spinner
         mBtSubmit!!.setOnClickListener(this)
 
+        mCameraButton = view.findViewById(R.id.photoButton)
+        mCameraButton!!.setOnClickListener(this)
+
         //Get the data that was sent in
         val incomingBundle = arguments
         val firstName = incomingBundle!!.getString("FN_DATA")
@@ -95,6 +124,8 @@ class DetailsFragment : Fragment(), View.OnClickListener {
         val height = incomingBundle!!.getString("HEIGHT_DATA")
         val location = incomingBundle!!.getString("LOCATION_DATA")
         val activityLevel = incomingBundle!!.getString("ACTIVITYLEVEL_DATA")
+        val imagefilepath = incomingBundle!!.getString("IMAGE_FILEPATH")
+        filePathString = imagefilepath
 
         //Set the data
         if (firstName != null) {
@@ -118,7 +149,14 @@ class DetailsFragment : Fragment(), View.OnClickListener {
             mLocation!!.setText(location)
         }
 
-        val spArray = arrayOf("Sedentary: little or no exercise", "Exercise 1-3 times/week", "Exercise 4-5 times/week", "Daily exercise or intense exercise 3-4 times/week", "Intense exercise 6-7 times/week", "Very intense exercise daily, or physical job")
+        if (imagefilepath != null) {
+            val profilePicture = BitmapFactory.decodeFile(imagefilepath)
+            if (profilePicture != null) {
+                mPicView!!.setImageBitmap(profilePicture)
+            }
+        }
+
+        val spArray = arrayOf("Sedentary: little or no exercise", "Exercise 1-3 times/week", "Moderate Exercise 3-5 times/week", "Very Active 6-7 days/wk", "Extremely active (intense exercise/physical job)")
         val adapter: ArrayAdapter<CharSequence> =
             ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, spArray)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -150,7 +188,18 @@ class DetailsFragment : Fragment(), View.OnClickListener {
                     checkLocation()
                     checkAge()
                     checkActivityLevel()
-                    mDataPasser!!.detailsCallback(DataArray)
+                    checkImageFilepath()
+                    mDataPasser!!.detailsCallback(DataArray) //any way to make this a bundle? --need to pass filepath to mainActivity
+                }
+            }
+            //get photo
+            R.id.photoButton -> {
+                //The button press should open a camera
+                val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                try{
+                    displayCameraThumbnail.launch(cameraIntent)
+                }catch(ex: ActivityNotFoundException){
+                    //Do error handling here
                 }
             }
         }
@@ -227,11 +276,61 @@ class DetailsFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    private fun checkImageFilepath() {
+        if (filePathString != null) {
+            DataArray[8] = filePathString
+        }
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
+    }
+    private val displayCameraThumbnail = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == AppCompatActivity.RESULT_OK) {
+            var thumbnailImage: Bitmap? = null
+            if (Build.VERSION.SDK_INT >= 33) {
+                thumbnailImage = result.data!!.getParcelableExtra("data", Bitmap::class.java)
+                mPicView!!.setImageBitmap(thumbnailImage)
+            }
+            else{
+                thumbnailImage = result.data!!.getParcelableExtra<Bitmap>("data")
+                mPicView!!.setImageBitmap(thumbnailImage)
+            }
+            //Open a file and write to it
+            if (isExternalStorageWritable) {
+                filePathString = savePic(thumbnailImage)
+            } else {
+                Toast.makeText(activity, "External storage not writable.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private val isExternalStorageWritable: Boolean
+        get() {
+            val state = Environment.getExternalStorageState()
+            return Environment.MEDIA_MOUNTED == state
+        }
+
+    private fun savePic(finalBitmap: Bitmap?): String {
+        val root = activity?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val myDir = File("$root/saved_images")
+        myDir.mkdirs()
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val fname = "Thumbnail_$timeStamp.jpg"
+        val file = File(myDir, fname)
+        if (file.exists()) file.delete()
+        try {
+            val out = FileOutputStream(file)
+            finalBitmap!!.compress(Bitmap.CompressFormat.JPEG, 90, out)
+            out.flush()
+            out.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return file.absolutePath
     }
 }

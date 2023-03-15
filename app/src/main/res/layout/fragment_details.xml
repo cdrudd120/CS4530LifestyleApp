@@ -2,6 +2,8 @@
 <!-- add onclick listener to radio buttons to keep track of the state -->
 <!-- replace edit texts (except for name) with something else where the user doesn't have to type -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -160,6 +162,19 @@
             android:layout_margin="12dp"
             android:backgroundTint="@color/cardview_dark_background"
             />
+        <Button
+            android:id="@+id/photoButton"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_margin="12dp"
+            android:layout_weight="1"
+            android:text="Take Photo" />
+
+        <ImageView
+            android:id="@+id/profilePic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:srcCompat="@tools:sample/avatars" />
         />
     </GridLayout>
 
