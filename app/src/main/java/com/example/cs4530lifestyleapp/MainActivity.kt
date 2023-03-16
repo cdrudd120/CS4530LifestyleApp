@@ -40,6 +40,8 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
     private var mCalorieIntake: String? = null
     private var mImageFilepath: String? = null
 
+    private var currPage: String? = null
+
     private var tablet: Boolean = false;
 
 
@@ -54,6 +56,45 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
         updateHeader()
         displayButtonFragment()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putString("CURRPAGE_DATA", currPage)
+        outState.putString("FN_DATA", mStringFirstName)
+        outState.putString("LN_DATA", mStringLastName)
+        outState.putString("AGE_DATA", mAge)
+        outState.putString("SEX_DATA", mSex)
+        outState.putString("HEIGHT_DATA", mHeight)
+        outState.putString("WEIGHT_DATA", mWeight)
+        outState.putString("LOCATION_DATA", mLocation)
+        outState.putString("ACTIVITYLEVEL_DATA", mActivityLevel)
+        outState.putString("IMAGE_FILEPATH", mImageFilepath)
+        outState.putString("BMR_DATA", mBMR)
+        outState.putString("CALORIEINTAKE_DATA", mCalorieIntake)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        currPage = savedInstanceState!!.getString("CURRPAGE_DATA")
+        buttonsCallback(currPage)
+        mStringFirstName = savedInstanceState!!.getString("FN_DATA")
+        mStringLastName = savedInstanceState!!.getString("LN_DATA")
+        mAge = savedInstanceState!!.getString("AGE_DATA")
+        mSex = savedInstanceState!!.getString("SEX_DATA")
+        mHeight = savedInstanceState!!.getString("HEIGHT_DATA")
+        mWeight = savedInstanceState!!.getString("WEIGHT_DATA")
+        mLocation = savedInstanceState!!.getString("LOCATION_DATA")
+        mActivityLevel = savedInstanceState!!.getString("ACTIVITYLEVEL_DATA")
+        mImageFilepath = savedInstanceState!!.getString("IMAGE_FILEPATH")
+        mBMR = savedInstanceState!!.getString("BMR_DATA")
+        mCalorieIntake = savedInstanceState!!.getString("CALORIEINTAKE_DATA")
+
+        updateHeader()
+
+
     }
 
     private fun displayButtonFragment() {
@@ -205,6 +246,8 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
     }
 
     override fun detailsCallback(data: Array<String?>?) {
+        currPage = "Main"
+
         mStringFirstName = data!![0]
         mStringLastName = data[1]
         mSex = data[2]
@@ -256,15 +299,21 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
     override fun buttonsCallback(data: String?) {
         if (data == "Details") {
+            currPage = "Details"
             displayDetailsFragment()
         } else if (data == "Hikes") {
             displayHikes()
         } else if (data == "Edit") {
+            currPage = "Edit"
             displayEditDetailsFragment()
         } else if (data == "Weather") {
+            currPage = "Weather"
             displayWeatherFragment()
         } else if (data == "BMI") {
+            currPage = "BMI"
             displayBMIFragment()
+        } else if (data == "Main") {
+            currPage = "Main"
         }
     }
 
