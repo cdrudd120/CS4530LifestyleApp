@@ -197,9 +197,9 @@ class DetailsFragment : Fragment(), View.OnClickListener {
                 mStringFullName = mEtFullName!!.text.toString()
 
                 //Check if the Name is empty, it is the only required input field
-                if (mStringFullName.isNullOrBlank()) {
+                if (mStringFullName.isNullOrBlank() || filePathString.isNullOrBlank()) {
                     //Complain that there's no text
-                    Toast.makeText(activity, "Enter a name first!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, "Enter a name and photo first!", Toast.LENGTH_SHORT).show()
                 }
 
                 else {
