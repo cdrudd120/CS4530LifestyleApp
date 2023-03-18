@@ -215,6 +215,16 @@ class DetailsFragment : Fragment(), View.OnClickListener {
                 }
             }
             R.id.button_back -> {
+                mStringFullName = mEtFullName!!.text.toString()
+
+                checkFirstAndLast()
+                checkSex()
+                checkWeight()
+                checkHeight()
+                checkLocation()
+                checkAge()
+                checkActivityLevel()
+                checkImageFilepath()
                 mDataPasser!!.detailsCallback(DataArray)
             }
             //get photo
@@ -231,27 +241,32 @@ class DetailsFragment : Fragment(), View.OnClickListener {
     }
 
     private fun checkFirstAndLast() {
-        //Remove any leading spaces or tabs
-        mStringFullName = mStringFullName!!.replace("^\\s+".toRegex(), "")
-        //Separate the string into first and last name using simple Java stuff
-        val splitStrings: Array<String?> = mStringFullName!!.split("\\s+".toRegex()).toTypedArray()
-        if (splitStrings.size == 1) {
-            Toast.makeText(
-                activity,
-                "Enter both first and last name!",
-                Toast.LENGTH_SHORT
-            ).show()
-        } else if (splitStrings.size == 2) {
-            //Reward them for submitting their names
-            Toast.makeText(activity, "Good job!", Toast.LENGTH_SHORT).show()
-            DataArray[0] = splitStrings[0]
-            DataArray[1] = splitStrings[1]
-        } else {
-            Toast.makeText(
-                activity,
-                "Enter only first and last name!",
-                Toast.LENGTH_SHORT
-            ).show()
+        if (mStringFullName == null) {
+            mStringFullName = ""
+        }
+        else{
+            //Remove any leading spaces or tabs
+            mStringFullName = mStringFullName!!.replace("^\\s+".toRegex(), "")
+            //Separate the string into first and last name using simple Java stuff
+            val splitStrings: Array<String?> = mStringFullName!!.split("\\s+".toRegex()).toTypedArray()
+            if (splitStrings.size == 1) {
+                Toast.makeText(
+                    activity,
+                    "Enter both first and last name!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else if (splitStrings.size == 2) {
+                //Reward them for submitting their names
+                Toast.makeText(activity, "Good job!", Toast.LENGTH_SHORT).show()
+                DataArray[0] = splitStrings[0]
+                DataArray[1] = splitStrings[1]
+            } else {
+                Toast.makeText(
+                    activity,
+                    "Enter only first and last name!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 
