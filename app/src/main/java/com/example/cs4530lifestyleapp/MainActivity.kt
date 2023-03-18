@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
         outState.putString("CURRPAGE_DATA", currPage)
         outState.putString("FN_DATA", mStringFirstName)
         outState.putString("LN_DATA", mStringLastName)
+        outState.putString("BMR_DATA", mBMR)
         outState.putString("AGE_DATA", mAge)
         outState.putString("SEX_DATA", mSex)
         outState.putString("HEIGHT_DATA", mHeight)
@@ -90,8 +91,6 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
 
-        currPage = savedInstanceState!!.getString("CURRPAGE_DATA")
-        buttonsCallback(currPage)
         mStringFirstName = savedInstanceState!!.getString("FN_DATA")
         mStringLastName = savedInstanceState!!.getString("LN_DATA")
         mAge = savedInstanceState!!.getString("AGE_DATA")
@@ -106,9 +105,10 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
         latitude = savedInstanceState!!.getString("LAT")
         longitude = savedInstanceState!!.getString("LONG")
 
+        currPage = savedInstanceState!!.getString("CURRPAGE_DATA")
+        buttonsCallback(currPage)
+
         updateHeader()
-
-
     }
 
     private fun displayButtonFragment() {
@@ -340,10 +340,12 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
     }
 
     override fun bmiCallback() {
+        currPage = "Main"
         displayButtonFragment()
     }
 
     override fun weatherCallback() {
+        currPage = "Main"
         displayButtonFragment()
     }
 

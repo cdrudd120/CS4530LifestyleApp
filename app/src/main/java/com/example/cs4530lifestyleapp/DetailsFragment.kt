@@ -230,36 +230,6 @@ class DetailsFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        outState.putString("NAME_DATA", mEtFullName!!.text.toString())
-        outState.putString("AGE_DATA", mAge.toString())
-        outState.putBoolean("FM_SEX_DATA", rbSexFemale!!.isChecked())
-        outState.putBoolean("M_SEX_DATA", rbSexMale!!.isChecked())
-        outState.putString("FEET_HEIGHT_DATA", mHeightFeet.toString())
-        outState.putString("INCHES_HEIGHT_DATA", mHeightInches.toString())
-        outState.putString("WEIGHT_DATA", mWeight.toString())
-        outState.putString("LOCATION_DATA", mLocation!!.text.toString())
-        outState.putInt("ACTIVITYLEVEL_DATA", spActivityLevel!!.selectedItemPosition)
-        outState.putString("IMAGE_FILEPATH", filePathString)
-    }
-
-//    override fun onRestoreInstanceState(@Nullable Bundle SavedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState)
-//
-//        mEtFullName!!.setText(savedInstanceState!!.getString("NAME_DATA"))
-//        mAge!!.setValue((savedInstanceState!!.getString("AGE_DATA"))!!.toInt())
-//        rbSexFemale!!.setChecked(savedInstanceState!!.getBoolean("FM_SEX_DATA"))
-//        rbSexMale!!.setChecked(savedInstanceState!!.getBoolean("M_SEX_DATA"))
-//        mHeightFeet!!.setValue((savedInstanceState!!.getString("FEET_HEIGHT_DATA"))!!.toInt())
-//        mHeightInches!!.setValue((savedInstanceState!!.getString("INCHES_HEIGHT_DATA"))!!.toInt())
-//        mWeight!!.setValue((savedInstanceState!!.getString("WEIGHT_DATA"))!!.toInt())
-//        mLocation!!.setText(savedInstanceState!!.getString("LOCATION_DATA"))
-//        spActivityLevel!!.setSelection(savedInstanceState!!.getInt("ACTIVITYLEVEL_DATA"))
-//        filePathString = savedInstanceState!!.getString("IMAGE_FILEPATH")
-//    }
-
     private fun checkFirstAndLast() {
         //Remove any leading spaces or tabs
         mStringFullName = mStringFullName!!.replace("^\\s+".toRegex(), "")

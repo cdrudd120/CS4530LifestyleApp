@@ -8,12 +8,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import kotlin.math.roundToInt
 
 class BMIFragment: Fragment(), View.OnClickListener{
 
     private var tvBMR: TextView? = null //variable for textView on screen
     private var tvCalorieIntake: TextView? = null //variable for textView on screen
+    private var BMR: String? = null
+    private var calorieIntake: String? = null
 
 
     private var btnBack: Button? = null
@@ -38,28 +39,21 @@ class BMIFragment: Fragment(), View.OnClickListener{
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_bmi, container, false)
 
         //get the text views
+        val view = inflater.inflate(R.layout.fragment_bmi, container, false)
         tvBMR = view.findViewById<View>(R.id.bmrText) as TextView //links XML variable to code variable
         tvCalorieIntake = view.findViewById<View>(R.id.calorieIntakeText) as TextView
 
+        btnBack = view.findViewById(R.id.buttonBack) as Button
+        btnBack!!.setOnClickListener(this)
+
         //Get the data that was sent in
         val incomingBundle = arguments
-        val BMR = incomingBundle!!.getString("BMR_DATA")
-        val calorieIntake = incomingBundle!!.getString("CALORIEINTAKE_DATA")
-
-        if (BMR != null) {
-            tvBMR!!.text = "BMR: "+BMR
-        }
-
-        if (calorieIntake != null) {
-            tvCalorieIntake!!.text ="Calorie Intake: "+calorieIntake
-        }
-
-        btnBack = view.findViewById(R.id.buttonBack) as Button
-
-        btnBack!!.setOnClickListener(this)
+        BMR = incomingBundle!!.getString("BMR_DATA")
+        tvBMR!!.text = "BMR: "+BMR
+        calorieIntake = incomingBundle!!.getString("CALORIEINTAKE_DATA")
+        tvCalorieIntake!!.text = "Calorie Intake: " + calorieIntake
 
         return view
     }
