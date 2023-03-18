@@ -22,6 +22,7 @@ import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 import android.graphics.BitmapFactory
+
 import java.util.*
 
 
@@ -39,6 +40,7 @@ class DetailsFragment : Fragment(), View.OnClickListener {
 
     private var mEtFullName: EditText? = null
     private var mBtSubmit: Button? = null
+    private var mBtBack: Button? = null
     private var mCameraButton: Button? = null
     private var mStringFullName: String? = null
     private var spActivityLevel: Spinner? = null
@@ -72,6 +74,8 @@ class DetailsFragment : Fragment(), View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+
         val view = inflater.inflate(R.layout.fragment_details, container, false)
 
         mEtFullName = view.findViewById(R.id.et_fullname) as EditText
@@ -108,11 +112,29 @@ class DetailsFragment : Fragment(), View.OnClickListener {
         mWeight!!.setValue(170)
 
         mBtSubmit = view.findViewById(R.id.button_submit) as Button
+        mBtBack = view.findViewById(R.id.button_back) as Button
         spActivityLevel = view.findViewById(R.id.spActivityLevel) as Spinner
         mBtSubmit!!.setOnClickListener(this)
+        mBtBack!!.setOnClickListener(this)
 
         mCameraButton = view.findViewById(R.id.photoButton)
         mCameraButton!!.setOnClickListener(this)
+
+//        if (savedInstanceState != null) {
+//
+//            mEtFullName!!.setText(savedInstanceState!!.getString("NAME_DATA"))
+//            mAge!!.setValue((savedInstanceState!!.getString("AGE_DATA"))!!.toInt())
+//            rbSexFemale!!.setChecked(savedInstanceState!!.getBoolean("FM_SEX_DATA"))
+//            rbSexMale!!.setChecked(savedInstanceState!!.getBoolean("M_SEX_DATA"))
+//            mHeightFeet!!.setValue((savedInstanceState!!.getString("FEET_HEIGHT_DATA"))!!.toInt())
+//            mHeightInches!!.setValue((savedInstanceState!!.getString("INCHES_HEIGHT_DATA"))!!.toInt())
+//            mWeight!!.setValue((savedInstanceState!!.getString("WEIGHT_DATA"))!!.toInt())
+//            mLocation!!.setText(savedInstanceState!!.getString("LOCATION_DATA"))
+//            spActivityLevel!!.setSelection(savedInstanceState!!.getInt("ACTIVITYLEVEL_DATA"))
+//            filePathString = savedInstanceState!!.getString("IMAGE_FILEPATH")
+//
+//        }
+
 
         //Get the data that was sent in
         val incomingBundle = arguments
@@ -192,6 +214,9 @@ class DetailsFragment : Fragment(), View.OnClickListener {
                     mDataPasser!!.detailsCallback(DataArray) //any way to make this a bundle? --need to pass filepath to mainActivity
                 }
             }
+            R.id.button_back -> {
+                mDataPasser!!.detailsCallback(DataArray)
+            }
             //get photo
             R.id.photoButton -> {
                 //The button press should open a camera
@@ -220,8 +245,8 @@ class DetailsFragment : Fragment(), View.OnClickListener {
         outState.putString("IMAGE_FILEPATH", filePathString)
     }
 
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
+//    override fun onRestoreInstanceState(@Nullable Bundle SavedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState)
 //
 //        mEtFullName!!.setText(savedInstanceState!!.getString("NAME_DATA"))
 //        mAge!!.setValue((savedInstanceState!!.getString("AGE_DATA"))!!.toInt())

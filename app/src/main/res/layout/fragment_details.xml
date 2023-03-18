@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- add onclick listener to radio buttons to keep track of the state -->
 <!-- replace edit texts (except for name) with something else where the user doesn't have to type -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
@@ -181,6 +181,8 @@
         />
     </GridLayout>
 
+    <LinearLayout>
+
     <Button
         android:id="@+id/button_submit"
         android:layout_width="wrap_content"
@@ -189,4 +191,15 @@
         android:layout_margin="12dp"
         />
 
-</LinearLayout>
+    <Button
+        android:id="@+id/button_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:layout_margin="12dp"
+        />
+
+    </LinearLayout>
+
+
+</GridLayout>
