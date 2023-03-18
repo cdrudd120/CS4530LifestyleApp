@@ -20,6 +20,17 @@ public class NetworkUtils {
         return myURL;
     }
 
+    public static URL buildURLFromCoords(String latitude, String longitude){
+        URL myURL = null;
+        try{
+            myURL = new URL("http://api.openweathermap.org/data/2.5/weather?lat=" + latitude +
+                    "&lon=" + longitude + APPIDQUERY + app_id);
+        }catch(MalformedURLException e){
+            e.printStackTrace();
+        }
+        return myURL;
+    }
+
     public static String getDataFromURL(URL url) throws IOException{
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 

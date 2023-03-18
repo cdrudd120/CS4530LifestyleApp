@@ -1,15 +1,21 @@
 package com.example.cs4530lifestyleapp
 
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
+import android.location.Location
+import android.location.LocationManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -35,7 +41,7 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
     private var mSex: String? = null
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var latitude: String? = null
-    private var longtitude: String? = null
+    private var longitude: String? = null
     private var mBMR: String? = null
     private var mCalorieIntake: String? = null
     private var mImageFilepath: String? = null
@@ -44,7 +50,10 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
     private var tablet: Boolean = false;
 
+    private var PERMISSION_ID: Int = 1000;
 
+
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -56,6 +65,7 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
         updateHeader()
         displayButtonFragment()
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -73,6 +83,8 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
         outState.putString("IMAGE_FILEPATH", mImageFilepath)
         outState.putString("BMR_DATA", mBMR)
         outState.putString("CALORIEINTAKE_DATA", mCalorieIntake)
+        outState.putString("LAT", latitude)
+        outState.putString("LONG", longitude)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -91,6 +103,8 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
         mImageFilepath = savedInstanceState!!.getString("IMAGE_FILEPATH")
         mBMR = savedInstanceState!!.getString("BMR_DATA")
         mCalorieIntake = savedInstanceState!!.getString("CALORIEINTAKE_DATA")
+        latitude = savedInstanceState!!.getString("LAT")
+        longitude = savedInstanceState!!.getString("LONG")
 
         updateHeader()
 
@@ -156,9 +170,11 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
     }
 
     private fun displayHikes() {
+
         getLocation()
 
-        val longAndLatString = "geo:$longtitude,$latitude?q=hikes"
+
+        val longAndLatString = "geo:$longitude,$latitude?q=hikes"
         val searchUri = Uri.parse(longAndLatString)
         //Create the implicit intent
         val mapIntent = Intent(Intent.ACTION_VIEW, searchUri)
@@ -177,7 +193,6 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
             !=PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "We need location permission.", Toast.LENGTH_SHORT)
                 ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 100)
-            return
         }
 
         val location = fusedLocationProviderClient.lastLocation
@@ -187,7 +202,7 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
             }
             else {
                 latitude = it.latitude.toString()
-                longtitude = it.longitude.toString()
+                longitude = it.longitude.toString()
             }
 
         }
@@ -197,6 +212,13 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
         killFragment()
 
         val weatherFragment = WeatherFragment()
+
+        getLocation()
+
+        val sentData = Bundle()
+        sentData.putString("LAT", latitude)
+        sentData.putString("LONG", longitude)
+        weatherFragment.arguments = sentData
 
         val fTrans = supportFragmentManager.beginTransaction()
         fTrans.replace(R.id.fl_frag_container, weatherFragment, "main_tag")

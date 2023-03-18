@@ -15,8 +15,10 @@ import androidx.fragment.app.Fragment
 import org.json.JSONException
 import org.json.JSONObject
 import java.lang.ref.WeakReference
+import java.net.URL
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.math.roundToInt
 
 
 class WeatherFragment: Fragment(), View.OnClickListener{
@@ -36,6 +38,10 @@ class WeatherFragment: Fragment(), View.OnClickListener{
     private var mDataPasser: WeatherPassing? = null
 
     private val mFetchWeather: FetchWeather = FetchWeather()
+
+    private var latitude: String? = null
+    private var longitude: String? = null
+    private var defaultLocation:String? = "Salt&Lake&City,us"
 
     interface WeatherPassing {
         fun weatherCallback()
@@ -57,6 +63,11 @@ class WeatherFragment: Fragment(), View.OnClickListener{
     ): View? {
         val view = inflater.inflate(R.layout.fragment_weather, container, false)
 
+        //Get the data that was sent in
+        val incomingBundle = arguments
+        latitude = incomingBundle!!.getString("LAT")
+        longitude = incomingBundle!!.getString("LONG")
+
         mDescription = view.findViewById(R.id.description) as TextView
         mTemperature = view.findViewById(R.id.temperature) as TextView
         mFeelsLike = view.findViewById(R.id.feelsLike) as TextView
@@ -69,11 +80,22 @@ class WeatherFragment: Fragment(), View.OnClickListener{
 
         btnBack = view.findViewById(R.id.buttonBack) as Button
 
+        if(savedInstanceState != null){
+            mDescription!!.setText(savedInstanceState.getString("DESCRIPTION"))
+            mTemperature!!.setText(savedInstanceState.getString("TEMPERATURE"))
+            mMin!!.setText(savedInstanceState.getString("MIN"))
+            mMax!!.setText(savedInstanceState.getString("MAX"))
+            mHumidity!!.setText(savedInstanceState.getString("HUMIDITY"))
+            mWindSpeed!!.setText(savedInstanceState.getString("WIND"))
+            mSunrise!!.setText(savedInstanceState.getString("SUNRISE"))
+            mSunset!!.setText(savedInstanceState.getString("SUNSET"))
+        }
+
         btnBack!!.setOnClickListener(this)
 
         mFetchWeather.setWeakReference(this)
 
-        mFetchWeather.execute(this, "Salt&Lake&City,us")
+        mFetchWeather.execute(this)
 
 
         return view
@@ -87,6 +109,23 @@ class WeatherFragment: Fragment(), View.OnClickListener{
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putString("DESCRIPTION", mDescription!!.text.toString())
+        outState.putString("TEMPERATURE", mTemperature!!.text.toString())
+        outState.putString("FEELS", mFeelsLike!!.text.toString())
+        outState.putString("MIN", mMin!!.text.toString())
+        outState.putString("MAX", mMax!!.text.toString())
+        outState.putString("HUMIDITY", mHumidity!!.text.toString())
+        outState.putString("WIND", mWindSpeed!!.text.toString())
+        outState.putString("SUNRISE", mSunrise!!.text.toString())
+        outState.putString("SUNSET", mSunset!!.text.toString())
+        outState.putString("LATITUDE", latitude)
+        outState.putString("LONGITUDE", longitude)
+
+    }
+
     private inner class FetchWeather {
         var weatherFragmentWeakReference: WeakReference<WeatherFragment>? = null
         var executorService: ExecutorService = Executors.newSingleThreadExecutor()
@@ -95,10 +134,17 @@ class WeatherFragment: Fragment(), View.OnClickListener{
         fun setWeakReference(ref: WeatherFragment) {
             weatherFragmentWeakReference = WeakReference<WeatherFragment>(ref)
         }
-        fun execute(location1: WeatherFragment, location: String?) {
+        fun execute(location1: WeatherFragment) {
             executorService.execute(Runnable {
                 var jsonWeatherData: String?
-                val weatherDataURL = NetworkUtils.buildURLFromString(location)
+
+                val weatherDataURL: URL?
+                if(latitude == null || longitude == null){
+                    weatherDataURL = NetworkUtils.buildURLFromString(defaultLocation)
+                }
+                else{
+                    weatherDataURL = NetworkUtils.buildURLFromCoords(latitude, longitude)
+                }
                 try {
                     jsonWeatherData = NetworkUtils.getDataFromURL(weatherDataURL)
                     postToMainThread(jsonWeatherData)
@@ -128,14 +174,18 @@ class WeatherFragment: Fragment(), View.OnClickListener{
                         }
                         localRef!!.mDescription!!.text = myMap.getValue("\"description\"").removeSurrounding("\"")
                         var temperatureObj = jsonObj.getJSONObject("main")
-                        localRef!!.mTemperature!!.text = "Temperature: " + temperatureObj.getString("temp")
-                        localRef!!.mFeelsLike!!.text = "Feels Like: " + temperatureObj.getString("feels_like")
-                        localRef!!.mMin!!.text = "Min: " + temperatureObj.getString("temp_min")
-                        localRef!!.mMax!!.text = "Max: " + temperatureObj.getString("temp_max")
+                        localRef!!.mTemperature!!.text = "Temperature: " + (temperatureObj.getString("temp").toDouble() - 273.15).roundToInt().toString() + "C"
+                        localRef!!.mFeelsLike!!.text = "Feels Like: " + (temperatureObj.getString("feels_like").toDouble() - 273.15).roundToInt().toString() + "C"
+                        localRef!!.mMin!!.text = "Min: " + (temperatureObj.getString("temp_min").toDouble() - 273.15).roundToInt().toString() + "C"
+                        localRef!!.mMax!!.text = "Max: " + (temperatureObj.getString("temp_max").toDouble() - 273.15).roundToInt().toString() + "C"
                         localRef!!.mHumidity!!.text = "Humidity: " + temperatureObj.getString("humidity")
                         localRef!!.mWindSpeed!!.text = "Wind Speed: " + jsonObj.getJSONObject("wind").getString("speed")
-                        localRef!!.mSunrise!!.text = "Sunrise: " + jsonObj.getJSONObject("sys").getString("sunrise")
-                        localRef!!.mSunset!!.text = "Sunset: " + jsonObj.getJSONObject("sys").getString("sunset")
+
+                        val date1 = java.util.Date(jsonObj.getJSONObject("sys").getString("sunrise").toLong() * 1000)
+                        localRef!!.mSunrise!!.text = "Sunrise: " + date1
+
+                        val date2 = java.util.Date(jsonObj.getJSONObject("sys").getString("sunset").toLong() * 1000)
+                        localRef!!.mSunset!!.text = "Sunset: " + date2
 
 
                     } catch (e: JSONException) {
