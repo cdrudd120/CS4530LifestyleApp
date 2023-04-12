@@ -1,15 +1,18 @@
 package com.example.cs4530lifestyleapp
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import java.lang.ClassCastException
 
 class ShowDetailsFragment : Fragment(), View.OnClickListener{
+    private var mDetailsViewModel: DetailsViewModel? = null
+
     private var tvFirstName: TextView? = null
     private var tvLastName: TextView? = null
     private var tvAge: TextView? = null
@@ -42,6 +45,9 @@ class ShowDetailsFragment : Fragment(), View.OnClickListener{
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_show_details, container, false)
 
+        mDetailsViewModel = ViewModelProvider(this)[DetailsViewModel::class.java]
+        mDetailsViewModel!!.data.observe(viewLifecycleOwner, dataObserver)
+
         //Get the text views
         tvFirstName = view.findViewById<View>(R.id.tv_fn_data) as TextView
         tvLastName = view.findViewById<View>(R.id.tv_ln_data) as TextView
@@ -54,49 +60,38 @@ class ShowDetailsFragment : Fragment(), View.OnClickListener{
         tvActivityLevel = view.findViewById<View>(R.id.tv_activityLevel_data) as TextView
         btnBack = view.findViewById<View>(R.id.buttonBack) as Button
 
-        //Get the data that was sent in
-        val incomingBundle = arguments
-        val firstName = incomingBundle!!.getString("FN_DATA")
-        val lastName = incomingBundle!!.getString("LN_DATA")
-        val age = incomingBundle!!.getString("AGE_DATA")
-        val sex = incomingBundle!!.getString("SEX_DATA")
-        val weight = incomingBundle!!.getString("WEIGHT_DATA")
-        val height = incomingBundle!!.getString("HEIGHT_DATA")
-        val location = incomingBundle!!.getString("LOCATION_DATA")
-        val activityLevel = incomingBundle!!.getString("ACTIVITYLEVEL_DATA")
-
-
-        if (firstName != null) {
-            tvFirstName!!.text = firstName
-        }
-        if (lastName != null) {
-            tvLastName!!.text = lastName
-        }
-        if (age != null) {
-            tvAge!!.text = age
-        }
-        if (sex != null) {
-            tvSex!!.text = sex
-        }
-        if (weight != null) {
-            tvWeight!!.text = weight
-        }
-        if (height != null) {
-            tvHeightFeet!!.text = (Math.floorDiv(height!!.toInt(), 12)).toString()
-        }
-        if (height != null) {
-            tvHeightInches!!.text = (height!!.toInt() % 12).toString()
-        }
-        if (location != null) {
-            tvLocation!!.text = location
-        }
-        if (activityLevel != null) {
-            tvActivityLevel!!.text = activityLevel
-        }
-
-        btnBack!!.setOnClickListener(this);
+        btnBack!!.setOnClickListener(this)
 
         return view
+    }
+
+    private val dataObserver: Observer<DetailsData> =
+        Observer { detailsData -> // Update the UI if this data variable changes
+            if (detailsData != null) {
+                setData(detailsData)
+            }
+        }
+
+    private fun setData(detailsData: DetailsData) {
+        if (detailsData.firstName != null) {
+            tvFirstName!!.setText(detailsData.firstName)
+        }
+        if (detailsData.lastName != null) {
+            tvLastName!!.setText(detailsData.lastName)
+        }
+        tvAge!!.setText(detailsData.age.toString())
+        tvWeight!!.setText(detailsData.weight.toString())
+        tvHeightFeet!!.setText(detailsData.heightFeet.toString())
+        tvHeightInches!!.setText(detailsData.heightInches.toString())
+        if (detailsData.location != null) {
+            tvLocation!!.setText(detailsData.location)
+        }
+        if (detailsData.sex != null) {
+            tvSex!!.setText(detailsData.sex)
+        }
+        if (detailsData.activityLevel != null) {
+            tvActivityLevel!!.setText(detailsData.activityLevel)
+        }
     }
 
     override fun onClick(view: View) {

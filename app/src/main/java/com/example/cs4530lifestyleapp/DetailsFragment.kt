@@ -22,6 +22,8 @@ import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 import android.graphics.BitmapFactory
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 
 import java.util.*
 
@@ -29,6 +31,8 @@ import java.util.*
 
 
 class DetailsFragment : Fragment(), View.OnClickListener {
+    private var mDetailsViewModel: DetailsViewModel? = null
+
     private var mWeight: NumberPicker? = null
     private var mHeightFeet: NumberPicker? = null
     private var mHeightInches: NumberPicker? = null
@@ -56,7 +60,7 @@ class DetailsFragment : Fragment(), View.OnClickListener {
 
     //Callback interface
     interface DetailsPassing {
-        fun detailsCallback(data: Array<String?>?)
+        fun detailsCallback()
     }
 
     //Associate the callback with this Fragment
@@ -74,9 +78,10 @@ class DetailsFragment : Fragment(), View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-
         val view = inflater.inflate(R.layout.fragment_details, container, false)
+
+        mDetailsViewModel = ViewModelProvider(this)[DetailsViewModel::class.java]
+        mDetailsViewModel!!.data.observe(viewLifecycleOwner, dataObserver)
 
         mEtFullName = view.findViewById(R.id.et_fullname) as EditText
         mWeight = view.findViewById(R.id.npWeight) as NumberPicker
@@ -93,23 +98,23 @@ class DetailsFragment : Fragment(), View.OnClickListener {
         mAge!!.minValue = 0
         mAge!!.maxValue = 120
         mAge!!.wrapSelectorWheel = true
-        mAge!!.setValue(30)
+        mAge!!.value = 30
 
         //Setup height number pickers
         mHeightFeet!!.minValue = 2
         mHeightFeet!!.maxValue = 8
         mHeightFeet!!.wrapSelectorWheel = true
+        mHeightFeet!!.value = 5
         mHeightInches!!.minValue = 0
         mHeightInches!!.maxValue = 11
         mHeightInches!!.wrapSelectorWheel = true
-        mHeightFeet!!.setValue(5)
-        mHeightInches!!.setValue(8)
+        mHeightInches!!.value = 8
 
         // Setup weight number picker
         mWeight!!.minValue = 0
         mWeight!!.maxValue = 600
         mWeight!!.wrapSelectorWheel = true
-        mWeight!!.setValue(170)
+        mWeight!!.value = 170
 
         mBtSubmit = view.findViewById(R.id.button_submit) as Button
         mBtBack = view.findViewById(R.id.button_back) as Button
@@ -120,76 +125,57 @@ class DetailsFragment : Fragment(), View.OnClickListener {
         mCameraButton = view.findViewById(R.id.photoButton)
         mCameraButton!!.setOnClickListener(this)
 
-//        if (savedInstanceState != null) {
-//
-//            mEtFullName!!.setText(savedInstanceState!!.getString("NAME_DATA"))
-//            mAge!!.setValue((savedInstanceState!!.getString("AGE_DATA"))!!.toInt())
-//            rbSexFemale!!.setChecked(savedInstanceState!!.getBoolean("FM_SEX_DATA"))
-//            rbSexMale!!.setChecked(savedInstanceState!!.getBoolean("M_SEX_DATA"))
-//            mHeightFeet!!.setValue((savedInstanceState!!.getString("FEET_HEIGHT_DATA"))!!.toInt())
-//            mHeightInches!!.setValue((savedInstanceState!!.getString("INCHES_HEIGHT_DATA"))!!.toInt())
-//            mWeight!!.setValue((savedInstanceState!!.getString("WEIGHT_DATA"))!!.toInt())
-//            mLocation!!.setText(savedInstanceState!!.getString("LOCATION_DATA"))
-//            spActivityLevel!!.setSelection(savedInstanceState!!.getInt("ACTIVITYLEVEL_DATA"))
-//            filePathString = savedInstanceState!!.getString("IMAGE_FILEPATH")
-//
-//        }
-
-
-        //Get the data that was sent in
-        val incomingBundle = arguments
-        val firstName = incomingBundle!!.getString("FN_DATA")
-        val lastName = incomingBundle!!.getString("LN_DATA")
-        val age = incomingBundle!!.getString("AGE_DATA")
-        val sex = incomingBundle!!.getString("SEX_DATA")
-        val weight = incomingBundle!!.getString("WEIGHT_DATA")
-        val height = incomingBundle!!.getString("HEIGHT_DATA")
-        val location = incomingBundle!!.getString("LOCATION_DATA")
-        val activityLevel = incomingBundle!!.getString("ACTIVITYLEVEL_DATA")
-        val imagefilepath = incomingBundle!!.getString("IMAGE_FILEPATH")
-        filePathString = imagefilepath
-
-        //Set the data
-        if (firstName != null) {
-            mEtFullName!!.setText(firstName + " " + lastName)
-        }
-        if (age != null) {
-            mAge!!.setValue(age.toInt())
-        }
-        rbSexMale!!.setChecked(true)
-        if (sex == "Female") {
-            rbSexFemale!!.setChecked(true)
-        }
-        if (weight != null) {
-            mWeight!!.setValue(weight.toInt())
-        }
-        if (height != null) {
-            mHeightFeet!!.setValue(Math.floorDiv(height.toInt(), 12))
-            mHeightInches!!.setValue(height.toInt() % 12)
-        }
-        if (location != null) {
-            mLocation!!.setText(location)
-        }
-
-        if (imagefilepath != null) {
-            val profilePicture = BitmapFactory.decodeFile(imagefilepath)
-            if (profilePicture != null) {
-                mPicView!!.setImageBitmap(profilePicture)
-            }
-        }
-
         val spArray = arrayOf("Sedentary: little or no exercise", "Exercise 1-3 times/week", "Moderate Exercise 3-5 times/week", "Very Active 6-7 days/wk", "Extremely active (intense exercise/physical job)")
         val adapter: ArrayAdapter<CharSequence> =
             ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, spArray)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spActivityLevel!!.adapter = adapter
-        if (activityLevel != null) {
-            val spinnerPosition: Int = adapter.getPosition(activityLevel)
-            spActivityLevel!!.setSelection(spinnerPosition)
-        }
 
         return view
     }
+
+    private val dataObserver: Observer<DetailsData> =
+        Observer { detailsData -> // Update the UI if this data variable changes
+            if (detailsData != null) {
+                mEtFullName!!.setText(detailsData.firstName + " " + detailsData.lastName)
+                if (detailsData.age != null) {
+                    mAge!!.setValue(detailsData.age!!)
+                }
+                if (detailsData.weight != null) {
+                    mWeight!!.setValue(detailsData.weight!!)
+                }
+                if (detailsData.heightFeet != null) {
+                    mHeightFeet!!.setValue(detailsData.heightFeet!!)
+                }
+                if (detailsData.heightInches != null) {
+                    mHeightInches!!.setValue(detailsData.heightInches!!)
+                }
+                mLocation!!.setText(detailsData.location)
+
+                rbSexMale!!.setChecked(true)
+                if (detailsData.sex == "Female") {
+                    rbSexFemale!!.setChecked(true)
+                }
+
+                filePathString = detailsData.imageFilepath
+                if (detailsData.imageFilepath != null) {
+                    val profilePicture = BitmapFactory.decodeFile(detailsData.imageFilepath)
+                    if (profilePicture != null) {
+                        mPicView!!.setImageBitmap(profilePicture)
+                    }
+                }
+
+                val spArray = arrayOf("Sedentary: little or no exercise", "Exercise 1-3 times/week", "Moderate Exercise 3-5 times/week", "Very Active 6-7 days/wk", "Extremely active (intense exercise/physical job)")
+                val adapter: ArrayAdapter<CharSequence> =
+                    ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, spArray)
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spActivityLevel!!.adapter = adapter
+                if (detailsData.activityLevel != null) {
+                    val spinnerPosition: Int = adapter.getPosition(detailsData.activityLevel)
+                    spActivityLevel!!.setSelection(spinnerPosition)
+                }
+            }
+        }
 
     override fun onClick(view: View) {
         when (view.id) {
@@ -200,32 +186,54 @@ class DetailsFragment : Fragment(), View.OnClickListener {
                 if (mStringFullName.isNullOrBlank() || filePathString.isNullOrBlank()) {
                     //Complain that there's no text
                     Toast.makeText(activity, "Enter a name and photo first!", Toast.LENGTH_SHORT).show()
+                    return
                 }
 
-                else {
-                    checkFirstAndLast()
-                    checkSex()
-                    checkWeight()
-                    checkHeight()
-                    checkLocation()
-                    checkAge()
-                    checkActivityLevel()
-                    checkImageFilepath()
-                    mDataPasser!!.detailsCallback(DataArray) //any way to make this a bundle? --need to pass filepath to mainActivity
+                val splitStrings: Array<String?> = mStringFullName!!.split("\\s+".toRegex()).toTypedArray()
+                if (splitStrings.size == 1) {
+                    Toast.makeText(
+                        activity,
+                        "Enter both first and last name!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return
+                } else if (splitStrings.size > 2) {
+                    Toast.makeText(
+                        activity,
+                        "Enter only first and last name!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return
                 }
+
+                var data = Array<String?>(10, {null})
+                data[0] = splitStrings[0]
+                data[1] = splitStrings[1]
+                data[2] = mLocation!!.text.toString()
+                data[3] = spActivityLevel!!.selectedItem.toString()
+                data[4] = filePathString
+
+                if (rbSexMale!!.isChecked) {
+                    data[5] = "Male"
+                }
+                else if (rbSexFemale!!.isChecked) {
+                    data[5] = "Female"
+                }
+                else {
+                    data[5] = "NA"
+                }
+
+                data[6] = mAge!!.getValue().toString()
+                data[7] = mWeight!!.getValue().toString()
+                data[8] = mHeightFeet!!.getValue().toString()
+                data[9] = mHeightInches!!.getValue().toString()
+
+                mDetailsViewModel!!.setDetailsData(data)
+
+                mDataPasser!!.detailsCallback()
             }
             R.id.button_back -> {
-                mStringFullName = mEtFullName!!.text.toString()
-
-                checkFirstAndLast()
-                checkSex()
-                checkWeight()
-                checkHeight()
-                checkLocation()
-                checkAge()
-                checkActivityLevel()
-                checkImageFilepath()
-                mDataPasser!!.detailsCallback(DataArray)
+                mDataPasser!!.detailsCallback()
             }
             //get photo
             R.id.photoButton -> {
@@ -237,88 +245,6 @@ class DetailsFragment : Fragment(), View.OnClickListener {
                     //Do error handling here
                 }
             }
-        }
-    }
-
-    private fun checkFirstAndLast() {
-        if (mStringFullName == null) {
-            mStringFullName = ""
-        }
-        else{
-            //Remove any leading spaces or tabs
-            mStringFullName = mStringFullName!!.replace("^\\s+".toRegex(), "")
-            //Separate the string into first and last name using simple Java stuff
-            val splitStrings: Array<String?> = mStringFullName!!.split("\\s+".toRegex()).toTypedArray()
-            if (splitStrings.size == 1) {
-                Toast.makeText(
-                    activity,
-                    "Enter both first and last name!",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else if (splitStrings.size == 2) {
-                //Reward them for submitting their names
-                Toast.makeText(activity, "Good job!", Toast.LENGTH_SHORT).show()
-                DataArray[0] = splitStrings[0]
-                DataArray[1] = splitStrings[1]
-            } else {
-                Toast.makeText(
-                    activity,
-                    "Enter only first and last name!",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-    }
-
-    private  fun checkSex(){
-        if (rbSexMale!!.isChecked) {
-            DataArray[2] = "Male"
-        }
-        else if (rbSexFemale!!.isChecked) {
-            DataArray[2] = "Female"
-        }
-        else {
-            DataArray[2] = "NA"
-        }
-    }
-
-    private fun checkWeight() {
-        val weightString: String? =  mWeight!!.getValue().toString()
-        if (weightString != null) {
-            DataArray[3] = weightString
-        }
-    }
-
-    private fun checkAge() {
-        val ageString: String? = mAge!!.getValue().toString()
-        if (ageString != null) {
-            DataArray[4] = ageString
-        }
-    }
-
-    private fun checkActivityLevel() {
-        val activityLevel = spActivityLevel!!.getSelectedItem().toString();
-        DataArray[5] = activityLevel
-    }
-
-    private fun checkHeight() {
-        val intHeight = (mHeightFeet!!.getValue() * 12) + mHeightInches!!.getValue()
-        val height = intHeight.toString()
-        if (height != null) {
-            DataArray[6] = height
-        }
-    }
-
-    private fun checkLocation() {
-        val location = mLocation!!.text.toString()
-        if (location != null) {
-            DataArray[7] = location
-        }
-    }
-
-    private fun checkImageFilepath() {
-        if (filePathString != null) {
-            DataArray[8] = filePathString
         }
     }
 

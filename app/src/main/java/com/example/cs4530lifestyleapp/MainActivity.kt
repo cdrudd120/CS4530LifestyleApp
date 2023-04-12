@@ -19,6 +19,8 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.cs4530lifestyleapp.BMIFragment.BMIPassing
 import com.example.cs4530lifestyleapp.DetailsFragment.DetailsPassing
 import com.example.cs4530lifestyleapp.ListFragment.ListPassing
@@ -31,13 +33,11 @@ import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetailsPassing, WeatherPassing, BMIPassing {
     // Variables to store data in so we can keep it.
-    private var mStringFirstName: String? = null
-    private var mStringLastName: String? = null
+    private var mDetailsViewModel: DetailsViewModel? = null
     private var mWeight: String? = null
     private var mHeight: String? = null
     private var mActivityLevel: String? = null
     private var mAge: String? = null
-    private var mLocation: String? = null
     private var mSex: String? = null
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var latitude: String? = null
@@ -63,25 +63,35 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
             tablet = true;
         }
 
+        mDetailsViewModel = ViewModelProvider(this)[DetailsViewModel::class.java]
+        mDetailsViewModel!!.data.observe(this, dataObserver)
+
         updateHeader()
         displayButtonFragment()
-
     }
+
+    private val dataObserver: Observer<DetailsData> =
+        Observer { detailsData -> // Update the UI if this data variable changes
+            if (detailsData != null) {
+                mImageFilepath = detailsData.imageFilepath
+                if (detailsData.weight != null) {
+                    mWeight = detailsData.weight.toString()
+                }
+                if (detailsData.heightInches != null) {
+                    mHeight = ((detailsData.heightFeet!! * 12) + detailsData.heightInches!!).toString()
+                }
+                if (detailsData.age != null) {
+                    mAge = detailsData.age.toString()
+                }
+                mSex = detailsData.sex
+                mActivityLevel = detailsData.activityLevel
+            }
+        }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
         outState.putString("CURRPAGE_DATA", currPage)
-        outState.putString("FN_DATA", mStringFirstName)
-        outState.putString("LN_DATA", mStringLastName)
-        outState.putString("BMR_DATA", mBMR)
-        outState.putString("AGE_DATA", mAge)
-        outState.putString("SEX_DATA", mSex)
-        outState.putString("HEIGHT_DATA", mHeight)
-        outState.putString("WEIGHT_DATA", mWeight)
-        outState.putString("LOCATION_DATA", mLocation)
-        outState.putString("ACTIVITYLEVEL_DATA", mActivityLevel)
-        outState.putString("IMAGE_FILEPATH", mImageFilepath)
         outState.putString("BMR_DATA", mBMR)
         outState.putString("CALORIEINTAKE_DATA", mCalorieIntake)
         outState.putString("LAT", latitude)
@@ -91,15 +101,6 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
 
-        mStringFirstName = savedInstanceState!!.getString("FN_DATA")
-        mStringLastName = savedInstanceState!!.getString("LN_DATA")
-        mAge = savedInstanceState!!.getString("AGE_DATA")
-        mSex = savedInstanceState!!.getString("SEX_DATA")
-        mHeight = savedInstanceState!!.getString("HEIGHT_DATA")
-        mWeight = savedInstanceState!!.getString("WEIGHT_DATA")
-        mLocation = savedInstanceState!!.getString("LOCATION_DATA")
-        mActivityLevel = savedInstanceState!!.getString("ACTIVITYLEVEL_DATA")
-        mImageFilepath = savedInstanceState!!.getString("IMAGE_FILEPATH")
         mBMR = savedInstanceState!!.getString("BMR_DATA")
         mCalorieIntake = savedInstanceState!!.getString("CALORIEINTAKE_DATA")
         latitude = savedInstanceState!!.getString("LAT")
@@ -130,18 +131,6 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
         val detailsFragment = DetailsFragment()
 
-        val sentData = Bundle()
-        sentData.putString("FN_DATA", mStringFirstName)
-        sentData.putString("LN_DATA", mStringLastName)
-        sentData.putString("AGE_DATA", mAge)
-        sentData.putString("SEX_DATA", mSex)
-        sentData.putString("HEIGHT_DATA", mHeight)
-        sentData.putString("WEIGHT_DATA", mWeight)
-        sentData.putString("LOCATION_DATA", mLocation)
-        sentData.putString("ACTIVITYLEVEL_DATA", mActivityLevel)
-        sentData.putString("IMAGE_FILEPATH", mImageFilepath)
-        detailsFragment.arguments = sentData
-
         val fTrans = supportFragmentManager.beginTransaction()
         fTrans.replace(R.id.fl_frag_container, detailsFragment, "main_tag")
         fTrans.commit()
@@ -152,27 +141,13 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
         val showDetailsFragment = ShowDetailsFragment()
 
-        val sentData = Bundle()
-        sentData.putString("FN_DATA", mStringFirstName)
-        sentData.putString("LN_DATA", mStringLastName)
-        sentData.putString("AGE_DATA", mAge)
-        sentData.putString("SEX_DATA", mSex)
-        sentData.putString("HEIGHT_DATA", mHeight)
-        sentData.putString("WEIGHT_DATA", mWeight)
-        sentData.putString("LOCATION_DATA", mLocation)
-        sentData.putString("ACTIVITYLEVEL_DATA", mActivityLevel)
-        sentData.putString("IMAGE_FILEPATH", mImageFilepath)
-        showDetailsFragment.arguments = sentData
-
         val fTrans = supportFragmentManager.beginTransaction()
         fTrans.replace(R.id.fl_frag_container, showDetailsFragment, "main_tag")
         fTrans.commit()
     }
 
     private fun displayHikes() {
-
         getLocation()
-
 
         val longAndLatString = "geo:$longitude,$latitude?q=hikes"
         val searchUri = Uri.parse(longAndLatString)
@@ -241,6 +216,9 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
     }
 
     private fun updateHeader() {
+        calcBMR()
+        calcCaloricIntake()
+
         val actionBar: ActionBar? = supportActionBar
         actionBar!!.setDisplayOptions(
             actionBar.getDisplayOptions()
@@ -267,22 +245,7 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
         actionBar.setCustomView(imageView)
     }
 
-    override fun detailsCallback(data: Array<String?>?) {
-        currPage = "Main"
-
-        mStringFirstName = data!![0]
-        mStringLastName = data[1]
-        mSex = data[2]
-        mWeight = data[3]
-        mAge = data[4]
-        mActivityLevel = data[5]
-        mHeight = data[6]
-        mLocation = data[7]
-        mImageFilepath = data[8]
-
-        displayButtonFragment()
-
-        //calculate BMR
+    private fun calcBMR() {
         if (mSex=="Female"){
             var BMR = 447.593 + (9.247*(mWeight?.toInt()!!)*0.453592) + (3.098*(mHeight?.toInt()!!)*2.54) + (-4.330*(mAge?.toInt()!!))
             //Log.d("BMR",BMR.toString())
@@ -293,9 +256,9 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
             //Log.d("BMR",BMR.toString())
             mBMR= BMR.roundToInt().toString()
         }
+    }
 
-
-        //calculate ativity Level from https://www.diabetes.co.uk/bmr-calculator.html#:~:text=Harris%20Benedict%20Formula&text=Little%2Fno%20exercise%3A%20BMR%20*,BMR%20*%201.725%20%3D%20Total%20Calorie%20Need
+    private fun calcCaloricIntake() {
         if (mActivityLevel=="Sedentary: little or no exercise"){
             mCalorieIntake=(mBMR!!.toInt()*1.2).roundToInt().toString()
         }
@@ -311,6 +274,12 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
         else if (mActivityLevel=="Extremely active (intense exercise/physical job)"){
             mCalorieIntake=(mBMR!!.toInt()*1.9).roundToInt().toString()
         }
+    }
+
+    override fun detailsCallback() {
+        currPage = "Main"
+
+        displayButtonFragment()
 
         updateHeader()
     }
