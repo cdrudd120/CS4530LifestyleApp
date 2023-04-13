@@ -26,7 +26,7 @@ import androidx.lifecycle.ViewModelProvider
 
 
 class DetailsFragment : Fragment(), View.OnClickListener {
-    private var mDetailsViewModel: DetailsViewModel? = null
+    private lateinit var mDetailsViewModel: DetailsViewModel
 
     private var mWeight: NumberPicker? = null
     private var mHeightFeet: NumberPicker? = null
@@ -75,7 +75,7 @@ class DetailsFragment : Fragment(), View.OnClickListener {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_details, container, false)
 
-        mDetailsViewModel = ViewModelProvider(this)[DetailsViewModel::class.java]
+        mDetailsViewModel = ViewModelProvider(requireActivity())[DetailsViewModel::class.java]
         mDetailsViewModel!!.data.observe(viewLifecycleOwner, dataObserver)
 
         mEtFullName = view.findViewById(R.id.et_fullname) as EditText
