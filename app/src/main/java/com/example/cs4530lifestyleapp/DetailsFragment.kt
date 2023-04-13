@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,10 +23,6 @@ import java.util.*
 import android.graphics.BitmapFactory
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-
-import java.util.*
-
-
 
 
 class DetailsFragment : Fragment(), View.OnClickListener {
@@ -206,27 +201,27 @@ class DetailsFragment : Fragment(), View.OnClickListener {
                     return
                 }
 
-                var data = Array<String?>(10, {null})
-                data[0] = splitStrings[0]
-                data[1] = splitStrings[1]
-                data[2] = mLocation!!.text.toString()
-                data[3] = spActivityLevel!!.selectedItem.toString()
-                data[4] = filePathString
+                var data: DetailsData = DetailsData()
+                data.firstName = splitStrings[0]
+                data.lastName = splitStrings[1]
+                data.location = mLocation!!.text.toString()
+                data.activityLevel = spActivityLevel!!.selectedItem.toString()
+                data.imageFilepath = filePathString
 
                 if (rbSexMale!!.isChecked) {
-                    data[5] = "Male"
+                    data.sex = "Male"
                 }
                 else if (rbSexFemale!!.isChecked) {
-                    data[5] = "Female"
+                    data.sex = "Female"
                 }
                 else {
-                    data[5] = "NA"
+                    data.sex = "NA"
                 }
 
-                data[6] = mAge!!.getValue().toString()
-                data[7] = mWeight!!.getValue().toString()
-                data[8] = mHeightFeet!!.getValue().toString()
-                data[9] = mHeightInches!!.getValue().toString()
+                data.age = mAge!!.value
+                data.weight = mWeight!!.value
+                data.heightFeet = mHeightFeet!!.value
+                data.heightInches = mHeightInches!!.value
 
                 mDetailsViewModel!!.setDetailsData(data)
 

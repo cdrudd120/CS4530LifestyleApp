@@ -1,26 +1,21 @@
 package com.example.cs4530lifestyleapp
 
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.graphics.BitmapFactory
-import android.location.Location
-import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.example.cs4530lifestyleapp.BMIFragment.BMIPassing
 import com.example.cs4530lifestyleapp.DetailsFragment.DetailsPassing
 import com.example.cs4530lifestyleapp.ListFragment.ListPassing
@@ -33,7 +28,7 @@ import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetailsPassing, WeatherPassing, BMIPassing {
     // Variables to store data in so we can keep it.
-    private var mDetailsViewModel: DetailsViewModel? = null
+    //private var mDetailsViewModel: ViewModel? = null
     private var mWeight: String? = null
     private var mHeight: String? = null
     private var mActivityLevel: String? = null
@@ -52,6 +47,10 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
     private var PERMISSION_ID: Int = 1000;
 
+    private val mViewModel: DetailsViewModel by viewModels {
+        DetailsViewModelFactory((application as LifestyleApplication).repository)
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,8 +62,8 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
             tablet = true;
         }
 
-        mDetailsViewModel = ViewModelProvider(this)[DetailsViewModel::class.java]
-        mDetailsViewModel!!.data.observe(this, dataObserver)
+//        mDetailsViewModel = ViewModelProvider(this)[ViewModel::class.java]
+        mViewModel!!.data.observe(this, dataObserver)
 
         updateHeader()
         displayButtonFragment()

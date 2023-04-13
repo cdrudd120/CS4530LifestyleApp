@@ -1,46 +1,60 @@
 package com.example.cs4530lifestyleapp
 
-import android.app.Application
-import android.support.v4.os.IResultReceiver._Parcel
-import android.telecom.Call.Details
 import androidx.lifecycle.MutableLiveData
+import androidx.annotation.WorkerThread
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
+import kotlin.jvm.Synchronized
 
-class Repository private constructor(application: Application) {
-    var detailsData = MutableLiveData<DetailsData>()
+class Repository private constructor(dao: Dao) {
+    val detailsData = MutableLiveData<DetailsData>()
 
-    companion object {
-        @Volatile
-        private var instance: Repository? = null
-        @Synchronized
-        fun getInstance(application: Application): Repository {
-            if (instance == null) {
-                instance = Repository(application)
-            }
-            return instance as Repository
+    private var details: DetailsData? = null
+    private var mDao: Dao = dao
+
+    fun setDetailsData(data: DetailsData) {
+        mScope.launch(Dispatchers.IO){
+            parseDetails(data)
+            detailsData.postValue(details);
         }
     }
-
-    fun setDetailsData(data: Array<String?>) {
+    @WorkerThread
+    suspend fun parseDetails(data: DetailsData) {
         var d = DetailsData()
-        d.firstName = data[0]
-        d.lastName = data[1]
-        d.location = data[2]
-        d.activityLevel = data[3]
-        d.imageFilepath = data[4]
-        d.sex = data[5]
-        if (data[6] != null) {
-            d.age = data[6]!!.toInt()
+        d.firstName = data.firstName
+        d.lastName = data.lastName
+        d.location = data.location
+        d.activityLevel = data.activityLevel
+        d.imageFilepath = data.imageFilepath
+        d.sex = data.sex
+        if (data.age != null) {
+            d.age = data.age!!.toInt()
         }
-        if (data[7] != null) {
-            d.weight = data[7]!!.toInt()
+        if (data.weight != null) {
+            d.weight = data.weight!!.toInt()
         }
-        if (data[8] != null) {
-            d.heightFeet = data[8]!!.toInt()
+        if (data.heightFeet != null) {
+            d.heightFeet = data.heightFeet!!.toInt()
         }
-        if (data[9] != null) {
-            d.heightInches = data[9]!!.toInt()
+        if (data.heightInches != null) {
+            d.heightInches = data.heightInches!!.toInt()
         }
+        details = d
+    }
 
-        detailsData.setValue(d)
+    companion object {
+        private var mInstance: Repository? = null
+        private lateinit var mScope: CoroutineScope
+        @Synchronized
+        fun getInstance(dao: Dao, scope: CoroutineScope): Repository {
+            mScope = scope
+            return mInstance?: synchronized(this){
+                val instance = Repository(dao)
+                mInstance = instance
+                instance
+            }
+        }
     }
 }
