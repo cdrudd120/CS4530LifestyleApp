@@ -224,8 +224,8 @@ class DetailsFragment : Fragment(), View.OnClickListener {
                 data.heightInches = mHeightInches!!.value
 
                 mDetailsViewModel!!.setDetailsData(data)
-
                 mDataPasser!!.detailsCallback()
+
             }
             R.id.button_back -> {
                 mDataPasser!!.detailsCallback()

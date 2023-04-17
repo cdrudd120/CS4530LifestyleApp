@@ -84,6 +84,7 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
                 }
                 mSex = detailsData.sex
                 mActivityLevel = detailsData.activityLevel
+                updateHeader()
             }
         }
 
