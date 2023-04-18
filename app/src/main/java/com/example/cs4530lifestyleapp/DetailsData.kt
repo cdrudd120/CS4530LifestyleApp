@@ -11,4 +11,6 @@ class DetailsData() {
     var location: String? = null
     var imageFilepath: String? = null
     var activityLevel: String? = null
+    var bmr: String?=null
+    var caloricIntake: String?=null
 }

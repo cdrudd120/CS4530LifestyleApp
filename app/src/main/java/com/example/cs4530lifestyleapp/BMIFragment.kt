@@ -8,15 +8,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 
 class BMIFragment: Fragment(), View.OnClickListener{
-
+    private lateinit var mDetailsViewModel: DetailsViewModel
     private var tvBMR: TextView? = null //variable for textView on screen
     private var tvCalorieIntake: TextView? = null //variable for textView on screen
-    private var BMR: String? = null
-    private var calorieIntake: String? = null
-
-
     private var btnBack: Button? = null
 
     private var mDataPasser: BMIPassing? = null
@@ -48,20 +46,27 @@ class BMIFragment: Fragment(), View.OnClickListener{
         btnBack = view.findViewById(R.id.buttonBack) as Button
         btnBack!!.setOnClickListener(this)
 
-        //Get the data that was sent in
-        val incomingBundle = arguments
-        BMR = incomingBundle!!.getString("BMR_DATA")
-        tvBMR!!.text = "BMR: "+BMR
-        calorieIntake = incomingBundle!!.getString("CALORIEINTAKE_DATA")
-        tvCalorieIntake!!.text = "Calorie Intake: " + calorieIntake
-
+        mDetailsViewModel = ViewModelProvider(requireActivity())[DetailsViewModel::class.java]
+        mDetailsViewModel!!.data.observe(viewLifecycleOwner, dataObserver)
         return view
     }
+
+    private val dataObserver: Observer<DetailsData> =
+        Observer { detailsData -> // Update the UI if this data variable changes
+            if (detailsData != null) {
+                if (detailsData.bmr!=null){
+                    tvBMR!!.text = "BMR: "+detailsData.bmr
+                }
+                if(detailsData.caloricIntake!=null){
+                    tvCalorieIntake!!.text = "Calorie Intake: " + detailsData.caloricIntake
+                }
+            }
+        }
 
     override fun onClick(view: View) {
         when (view.id) {
             R.id.buttonBack -> {
-                mDataPasser!!.bmiCallback()
+                mDataPasser!!.bmiCallback() //do we even need this if we aren't passing data back?
             }
         }
     }

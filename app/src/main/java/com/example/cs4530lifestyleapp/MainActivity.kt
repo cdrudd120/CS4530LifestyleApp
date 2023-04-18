@@ -84,6 +84,8 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
                 }
                 mSex = detailsData.sex
                 mActivityLevel = detailsData.activityLevel
+                mBMR=detailsData.bmr
+                mCalorieIntake=detailsData.caloricIntake
                 updateHeader()
             }
         }
@@ -179,7 +181,6 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
                 latitude = it.latitude.toString()
                 longitude = it.longitude.toString()
             }
-
         }
     }
 
@@ -205,19 +206,14 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
         val bmiFragment = BMIFragment()
 
-        val sentData = Bundle()
-        sentData.putString("BMR_DATA", mBMR)
-        sentData.putString("CALORIEINTAKE_DATA", mCalorieIntake)
-        bmiFragment.arguments=sentData
-
         val fTrans = supportFragmentManager.beginTransaction()
         fTrans.replace(R.id.fl_frag_container, bmiFragment, "main_tag")
         fTrans.commit()
     }
 
     private fun updateHeader() {
-        calcBMR()
-        calcCaloricIntake()
+//        calcBMR()
+//        calcCaloricIntake()
 
         val actionBar: ActionBar? = supportActionBar
         actionBar!!.setDisplayOptions(
@@ -243,37 +239,6 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
         layoutParams.rightMargin = 0
         imageView.setLayoutParams(layoutParams)
         actionBar.setCustomView(imageView)
-    }
-
-    private fun calcBMR() {
-        if (mSex=="Female"){
-            var BMR = 447.593 + (9.247*(mWeight?.toInt()!!)*0.453592) + (3.098*(mHeight?.toInt()!!)*2.54) + (-4.330*(mAge?.toInt()!!))
-            //Log.d("BMR",BMR.toString())
-            mBMR= BMR.roundToInt().toString()
-        }
-        if (mSex=="Male"){
-            var BMR = 88.362 + (13.397*(mWeight?.toInt()!!)*0.453592) + (4.799*(mHeight?.toInt()!!)*2.54) + (-5.677*(mAge?.toInt()!!))
-            //Log.d("BMR",BMR.toString())
-            mBMR= BMR.roundToInt().toString()
-        }
-    }
-
-    private fun calcCaloricIntake() {
-        if (mActivityLevel=="Sedentary: little or no exercise"){
-            mCalorieIntake=(mBMR!!.toInt()*1.2).roundToInt().toString()
-        }
-        else if (mActivityLevel=="Exercise 1-3 times/week"){
-            mCalorieIntake=(mBMR!!.toInt()*1.375).roundToInt().toString()
-        }
-        else if (mActivityLevel=="Moderate Exercise 3-5 times/week"){
-            mCalorieIntake=(mBMR!!.toInt()*1.55).roundToInt().toString()
-        }
-        else if (mActivityLevel=="Very Active 6-7 days/wk"){
-            mCalorieIntake=(mBMR!!.toInt()*1.725).roundToInt().toString()
-        }
-        else if (mActivityLevel=="Extremely active (intense exercise/physical job)"){
-            mCalorieIntake=(mBMR!!.toInt()*1.9).roundToInt().toString()
-        }
     }
 
     override fun detailsCallback() {

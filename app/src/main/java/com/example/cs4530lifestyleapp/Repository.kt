@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlin.jvm.Synchronized
+import kotlin.math.roundToInt
 
 class Repository private constructor(dao: Dao) {
     val detailsData = MutableLiveData<DetailsData>()
@@ -40,6 +41,34 @@ class Repository private constructor(dao: Dao) {
         }
         if (data.heightInches != null) {
             d.heightInches = data.heightInches!!.toInt()
+        }
+
+        //calculate BMR and caloric Intake
+        var mHeight = ((d.heightFeet!! * 12) + d.heightInches!!).toString()
+        if (d.sex=="Female"){
+            var BMR = 447.593 + (9.247*(d.weight?.toInt()!!)*0.453592) + (3.098*(mHeight?.toInt()!!)*2.54) + (-4.330*(d.age?.toInt()!!))
+            //Log.d("BMR",BMR.toString())
+            d.bmr= BMR.roundToInt().toString()
+        }
+        else if (d.sex=="Male"){
+            var BMR = 88.362 + (13.397*(d.weight?.toInt()!!)*0.453592) + (4.799*(mHeight?.toInt()!!)*2.54) + (-5.677*(d.age?.toInt()!!))
+            //Log.d("BMR",BMR.toString())
+            d.bmr= BMR.roundToInt().toString()
+        }
+        if (d.activityLevel=="Sedentary: little or no exercise"){
+            d.caloricIntake=(d.bmr!!.toInt()*1.2).roundToInt().toString()
+        }
+        else if (d.activityLevel=="Exercise 1-3 times/week"){
+            d.caloricIntake=(d.bmr!!.toInt()*1.375).roundToInt().toString()
+        }
+        else if (d.activityLevel=="Moderate Exercise 3-5 times/week"){
+            d.caloricIntake=(d.bmr!!.toInt()*1.55).roundToInt().toString()
+        }
+        else if (d.activityLevel=="Very Active 6-7 days/wk"){
+            d.caloricIntake=(d.bmr!!.toInt()*1.725).roundToInt().toString()
+        }
+        else if (d.activityLevel=="Extremely active (intense exercise/physical job)"){
+            d.caloricIntake=(d.bmr!!.toInt()*1.9).roundToInt().toString()
         }
         details = d
     }
