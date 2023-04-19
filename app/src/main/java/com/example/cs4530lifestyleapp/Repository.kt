@@ -22,15 +22,24 @@ class Repository private constructor(dao: DetailsDao) {
             insert()
         }
     }
+
+    fun setCurrPage(data: String?) {
+        if (details != null) {
+            details!!.currPage = data
+        }
+    }
+
     @WorkerThread
     suspend fun parseDetails(data: DetailsData) {
         var d = DetailsData()
+
         d.firstName = data.firstName
         d.lastName = data.lastName
         d.location = data.location
         d.activityLevel = data.activityLevel
         d.imageFilepath = data.imageFilepath
         d.sex = data.sex
+
         if (data.age != null) {
             d.age = data.age!!.toInt()
         }

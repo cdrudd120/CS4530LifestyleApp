@@ -65,7 +65,6 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 //        mDetailsViewModel = ViewModelProvider(this)[ViewModel::class.java]
         mViewModel!!.data.observe(this, dataObserver)
 
-        updateHeader()
         displayButtonFragment()
     }
 
@@ -86,6 +85,8 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
                 mActivityLevel = detailsData.activityLevel
                 mBMR=detailsData.bmr
                 mCalorieIntake=detailsData.caloricIntake
+                currPage = detailsData.currPage
+                buttonsCallback(currPage)
                 updateHeader()
             }
         }
@@ -207,14 +208,13 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
     }
 
     override fun detailsCallback() {
-        currPage = "Main"
-
+        mViewModel!!.setCurrPage("Main")
         displayButtonFragment()
-
         updateHeader()
     }
 
     override fun showDetailsCallback() {
+        mViewModel!!.setCurrPage("Main")
         displayButtonFragment()
     }
 
@@ -235,16 +235,18 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
             displayBMIFragment()
         } else if (data == "Main") {
             currPage = "Main"
+            displayButtonFragment()
         }
+        mViewModel!!.setCurrPage(currPage)
     }
 
     override fun bmiCallback() {
-        currPage = "Main"
+        mViewModel!!.setCurrPage("Main")
         displayButtonFragment()
     }
 
     override fun weatherCallback() {
-        currPage = "Main"
+        mViewModel!!.setCurrPage("Main")
         displayButtonFragment()
     }
 

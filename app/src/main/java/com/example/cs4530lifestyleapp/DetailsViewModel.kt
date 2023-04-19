@@ -11,6 +11,10 @@ class DetailsViewModel(repository: Repository) : ViewModel(){
         repository.setDetailsData(data)
     }
 
+    fun setCurrPage(data: String?) {
+        repository.setCurrPage(data)
+    }
+
     val data: LiveData<DetailsData>
         get() = detailsData
 
