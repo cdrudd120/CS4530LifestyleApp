@@ -184,6 +184,12 @@ class DetailsFragment : Fragment(), View.OnClickListener {
                     return
                 }
 
+                if (!rbSexFemale!!.isChecked && !rbSexMale!!.isChecked) {
+                    //Complain that there's no text
+                    Toast.makeText(activity, "Please choose your sex!", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
                 val splitStrings: Array<String?> = mStringFullName!!.split("\\s+".toRegex()).toTypedArray()
                 if (splitStrings.size == 1) {
                     Toast.makeText(
