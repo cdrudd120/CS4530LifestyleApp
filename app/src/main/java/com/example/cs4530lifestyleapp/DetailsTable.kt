@@ -4,16 +4,32 @@ import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 
-// This does not need to be its own class. You could directly annotate the WeatherData class
-// But since our Weather class is messy, it makes sense to strip out the parts
-// that we want stored in the db (just for testing and maintainability).
-// This does introduce the issue of drift between this class and the WeatherData class
 @Entity(tableName = "details_table")
 data class DetailsTable(
-    @field:ColumnInfo(name = "firstName")
+    @field:ColumnInfo(name = "first_name")
     @field:PrimaryKey
     var firstName: String,
-    @field:ColumnInfo(
-        name = "lastName"
-    ) var lastName: String
+    @field:ColumnInfo(name = "last_name")
+    var lastName: String,
+    @field:ColumnInfo(name = "height_inches")
+    var heightInches: Int,
+    @field:ColumnInfo(name = "height_feet")
+    var heightFeet:Int,
+    @field:ColumnInfo(name = "sex")
+    var sex: String,
+    @field:ColumnInfo(name = "age")
+    var age: Int,
+    @field:ColumnInfo(name = "weight")
+    var weight: Int,
+    @field:ColumnInfo(name = "location")
+    var location: String,
+//    @field:ColumnInfo(name = "image")
+//    var image: String,
+    @field:ColumnInfo(name = "activity_level")
+    var activityLevel: String,
+    @field:ColumnInfo(name = "bmr")
+    var bmr: String,
+    @field:ColumnInfo(name = "caloric_intake")
+    var caloricIntake: String
+
 )

@@ -16,5 +16,5 @@ class LifestyleApplication: Application() {
     // maintain a single global scope used for all coroutine operations in the repository and db.
     // If the viewmodel needs to spin up coroutines for some inconceivable reason, you can use
     // viewmodelscope inside the viewmodel
-    val repository by lazy{ Repository.getInstance(database.dao(),applicationScope)}
+    val repository by lazy{ Repository.getInstance(database.detailsDao(),applicationScope)}
 }

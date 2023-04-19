@@ -1,5 +1,10 @@
 package com.example.cs4530lifestyleapp
 
+import androidx.annotation.NonNull
+import androidx.room.PrimaryKey
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+
 class DetailsData() {
     var firstName: String? = null
     var lastName: String? = null

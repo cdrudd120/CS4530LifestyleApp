@@ -90,35 +90,9 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
             }
         }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        outState.putString("CURRPAGE_DATA", currPage)
-        outState.putString("BMR_DATA", mBMR)
-        outState.putString("CALORIEINTAKE_DATA", mCalorieIntake)
-        outState.putString("LAT", latitude)
-        outState.putString("LONG", longitude)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-
-        mBMR = savedInstanceState!!.getString("BMR_DATA")
-        mCalorieIntake = savedInstanceState!!.getString("CALORIEINTAKE_DATA")
-        latitude = savedInstanceState!!.getString("LAT")
-        longitude = savedInstanceState!!.getString("LONG")
-
-        currPage = savedInstanceState!!.getString("CURRPAGE_DATA")
-        buttonsCallback(currPage)
-
-        updateHeader()
-    }
-
     private fun displayButtonFragment() {
         killFragment()
-
         val buttonFragment = ListFragment()
-
         val fTrans = supportFragmentManager.beginTransaction()
         if (tablet) {
             fTrans.replace(R.id.fragList, buttonFragment, "button_tag")
@@ -130,9 +104,7 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
     private fun displayEditDetailsFragment() {
         killFragment()
-
         val detailsFragment = DetailsFragment()
-
         val fTrans = supportFragmentManager.beginTransaction()
         fTrans.replace(R.id.fl_frag_container, detailsFragment, "main_tag")
         fTrans.commit()
@@ -140,9 +112,7 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
     private fun displayDetailsFragment() {
         killFragment()
-
         val showDetailsFragment = ShowDetailsFragment()
-
         val fTrans = supportFragmentManager.beginTransaction()
         fTrans.replace(R.id.fl_frag_container, showDetailsFragment, "main_tag")
         fTrans.commit()
@@ -150,7 +120,6 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
     private fun displayHikes() {
         getLocation()
-
         val longAndLatString = "geo:$longitude,$latitude?q=hikes"
         val searchUri = Uri.parse(longAndLatString)
         //Create the implicit intent
@@ -186,11 +155,8 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
     private fun displayWeatherFragment() {
         killFragment()
-
         val weatherFragment = WeatherFragment()
-
         getLocation()
-
         val sentData = Bundle()
         sentData.putString("LAT", latitude)
         sentData.putString("LONG", longitude)
@@ -203,7 +169,6 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
     private fun displayBMIFragment() {
         killFragment()
-
         val bmiFragment = BMIFragment()
 
         val fTrans = supportFragmentManager.beginTransaction()

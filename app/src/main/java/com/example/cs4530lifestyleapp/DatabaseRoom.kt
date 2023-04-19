@@ -11,9 +11,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-@Database(entities = [DetailsTable::class], version = 1, exportSchema = false)
+@Database(entities = [DetailsTable::class], version = 2, exportSchema = false)
 abstract class DatabaseRoom : RoomDatabase() {
-    abstract fun dao(): Dao
+    abstract fun detailsDao(): DetailsDao
 
     // Make the db singleton. Could in theory
     // make this an object class, but the companion object approach
@@ -28,31 +28,32 @@ abstract class DatabaseRoom : RoomDatabase() {
             return mInstance?: synchronized(this){
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    DatabaseRoom::class.java, "weather.db"
+                    DatabaseRoom::class.java, "details.db"
                 )
-                    //.addCallback(RoomDatabaseCallback(scope))
+                    .addCallback(RoomDatabaseCallback(scope))
                     .fallbackToDestructiveMigration()
                     .build()
                 mInstance = instance
                 instance
             }
         }
-//
-//        private class RoomDatabaseCallback(
-//            private val scope: CoroutineScope
-//        ): RoomDatabase.Callback() {
-//            override fun onCreate(db: SupportSQLiteDatabase) {
-//                super.onCreate(db)
-//                mInstance?.let { database ->
-//                    scope.launch(Dispatchers.IO){
-//                        populateDbTask(database.weatherDao())
-//                    }
-//                }
-//            }
-//        }
-//
-//        suspend fun populateDbTask (weatherDao: WeatherDao) {
-//            weatherDao.insert(WeatherTable("Dummy_loc","Dummy_data"))
-//        }
+
+        private class RoomDatabaseCallback(
+            private val scope: CoroutineScope
+        ): RoomDatabase.Callback() {
+            override fun onCreate(db: SupportSQLiteDatabase) {
+                super.onCreate(db)
+                mInstance?.let { database ->
+                    scope.launch(Dispatchers.IO){
+                        populateDbTask(database.detailsDao())
+                    }
+                }
+            }
+        }
+
+        suspend fun populateDbTask (detailsDao: DetailsDao) {
+            detailsDao.insert(DetailsTable("Test", "User", 3, 5, "Male", 28,
+                200, "New York", "sedentary", "27", "100"))
+        }
     }
 }

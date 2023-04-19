@@ -4,21 +4,22 @@ import androidx.lifecycle.MutableLiveData
 import androidx.annotation.WorkerThread
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlin.jvm.Synchronized
 import kotlin.math.roundToInt
 
-class Repository private constructor(dao: Dao) {
+class Repository private constructor(dao: DetailsDao) {
     val detailsData = MutableLiveData<DetailsData>()
 
     private var details: DetailsData? = null
-    private var mDao: Dao = dao
+    private var mDao: DetailsDao = dao
 
     fun setDetailsData(data: DetailsData) {
         mScope.launch(Dispatchers.IO){
             parseDetails(data)
-            detailsData.postValue(details);
+            detailsData.postValue(details!!);
+
+            insert()
         }
     }
     @WorkerThread
@@ -73,11 +74,23 @@ class Repository private constructor(dao: Dao) {
         details = d
     }
 
+    @WorkerThread
+    suspend fun insert() {
+        if (details != null) {
+            mDao.insert(
+                DetailsTable(
+                    details!!.firstName!!, details!!.lastName!!, details!!.heightInches!!, details!!.heightFeet!!,
+            details!!.sex!!, details!!.age!!, details!!.weight!!, details!!.location!!, details!!.activityLevel!!,
+                details!!.bmr!!, details!!.caloricIntake!!)
+            )
+        }
+    }
+
     companion object {
         private var mInstance: Repository? = null
         private lateinit var mScope: CoroutineScope
         @Synchronized
-        fun getInstance(dao: Dao, scope: CoroutineScope): Repository {
+        fun getInstance(dao: DetailsDao, scope: CoroutineScope): Repository {
             mScope = scope
             return mInstance?: synchronized(this){
                 val instance = Repository(dao)
