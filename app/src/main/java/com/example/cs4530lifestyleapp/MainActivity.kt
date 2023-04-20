@@ -1,26 +1,21 @@
 package com.example.cs4530lifestyleapp
 
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.graphics.BitmapFactory
-import android.location.Location
-import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.example.cs4530lifestyleapp.BMIFragment.BMIPassing
 import com.example.cs4530lifestyleapp.DetailsFragment.DetailsPassing
 import com.example.cs4530lifestyleapp.ListFragment.ListPassing
@@ -33,7 +28,7 @@ import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetailsPassing, WeatherPassing, BMIPassing {
     // Variables to store data in so we can keep it.
-    private var mDetailsViewModel: DetailsViewModel? = null
+    //private var mDetailsViewModel: ViewModel? = null
     private var mWeight: String? = null
     private var mHeight: String? = null
     private var mActivityLevel: String? = null
@@ -52,6 +47,10 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
     private var PERMISSION_ID: Int = 1000;
 
+    private val mViewModel: DetailsViewModel by viewModels {
+        DetailsViewModelFactory((application as LifestyleApplication).repository)
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,10 +62,9 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
             tablet = true;
         }
 
-        mDetailsViewModel = ViewModelProvider(this)[DetailsViewModel::class.java]
-        mDetailsViewModel!!.data.observe(this, dataObserver)
+//        mDetailsViewModel = ViewModelProvider(this)[ViewModel::class.java]
+        mViewModel!!.data.observe(this, dataObserver)
 
-        updateHeader()
         displayButtonFragment()
     }
 
@@ -85,38 +83,17 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
                 }
                 mSex = detailsData.sex
                 mActivityLevel = detailsData.activityLevel
+                mBMR=detailsData.bmr
+                mCalorieIntake=detailsData.caloricIntake
+                currPage = detailsData.currPage
+                buttonsCallback(currPage)
+                updateHeader()
             }
         }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        outState.putString("CURRPAGE_DATA", currPage)
-        outState.putString("BMR_DATA", mBMR)
-        outState.putString("CALORIEINTAKE_DATA", mCalorieIntake)
-        outState.putString("LAT", latitude)
-        outState.putString("LONG", longitude)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-
-        mBMR = savedInstanceState!!.getString("BMR_DATA")
-        mCalorieIntake = savedInstanceState!!.getString("CALORIEINTAKE_DATA")
-        latitude = savedInstanceState!!.getString("LAT")
-        longitude = savedInstanceState!!.getString("LONG")
-
-        currPage = savedInstanceState!!.getString("CURRPAGE_DATA")
-        buttonsCallback(currPage)
-
-        updateHeader()
-    }
-
     private fun displayButtonFragment() {
         killFragment()
-
         val buttonFragment = ListFragment()
-
         val fTrans = supportFragmentManager.beginTransaction()
         if (tablet) {
             fTrans.replace(R.id.fragList, buttonFragment, "button_tag")
@@ -128,9 +105,7 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
     private fun displayEditDetailsFragment() {
         killFragment()
-
         val detailsFragment = DetailsFragment()
-
         val fTrans = supportFragmentManager.beginTransaction()
         fTrans.replace(R.id.fl_frag_container, detailsFragment, "main_tag")
         fTrans.commit()
@@ -138,9 +113,7 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
     private fun displayDetailsFragment() {
         killFragment()
-
         val showDetailsFragment = ShowDetailsFragment()
-
         val fTrans = supportFragmentManager.beginTransaction()
         fTrans.replace(R.id.fl_frag_container, showDetailsFragment, "main_tag")
         fTrans.commit()
@@ -148,7 +121,6 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
     private fun displayHikes() {
         getLocation()
-
         val longAndLatString = "geo:$longitude,$latitude?q=hikes"
         val searchUri = Uri.parse(longAndLatString)
         //Create the implicit intent
@@ -179,17 +151,13 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
                 latitude = it.latitude.toString()
                 longitude = it.longitude.toString()
             }
-
         }
     }
 
     private fun displayWeatherFragment() {
         killFragment()
-
         val weatherFragment = WeatherFragment()
-
         getLocation()
-
         val sentData = Bundle()
         sentData.putString("LAT", latitude)
         sentData.putString("LONG", longitude)
@@ -202,13 +170,7 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 
     private fun displayBMIFragment() {
         killFragment()
-
         val bmiFragment = BMIFragment()
-
-        val sentData = Bundle()
-        sentData.putString("BMR_DATA", mBMR)
-        sentData.putString("CALORIEINTAKE_DATA", mCalorieIntake)
-        bmiFragment.arguments=sentData
 
         val fTrans = supportFragmentManager.beginTransaction()
         fTrans.replace(R.id.fl_frag_container, bmiFragment, "main_tag")
@@ -216,8 +178,8 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
     }
 
     private fun updateHeader() {
-        calcBMR()
-        calcCaloricIntake()
+//        calcBMR()
+//        calcCaloricIntake()
 
         val actionBar: ActionBar? = supportActionBar
         actionBar!!.setDisplayOptions(
@@ -245,46 +207,14 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
         actionBar.setCustomView(imageView)
     }
 
-    private fun calcBMR() {
-        if (mSex=="Female"){
-            var BMR = 447.593 + (9.247*(mWeight?.toInt()!!)*0.453592) + (3.098*(mHeight?.toInt()!!)*2.54) + (-4.330*(mAge?.toInt()!!))
-            //Log.d("BMR",BMR.toString())
-            mBMR= BMR.roundToInt().toString()
-        }
-        if (mSex=="Male"){
-            var BMR = 88.362 + (13.397*(mWeight?.toInt()!!)*0.453592) + (4.799*(mHeight?.toInt()!!)*2.54) + (-5.677*(mAge?.toInt()!!))
-            //Log.d("BMR",BMR.toString())
-            mBMR= BMR.roundToInt().toString()
-        }
-    }
-
-    private fun calcCaloricIntake() {
-        if (mActivityLevel=="Sedentary: little or no exercise"){
-            mCalorieIntake=(mBMR!!.toInt()*1.2).roundToInt().toString()
-        }
-        else if (mActivityLevel=="Exercise 1-3 times/week"){
-            mCalorieIntake=(mBMR!!.toInt()*1.375).roundToInt().toString()
-        }
-        else if (mActivityLevel=="Moderate Exercise 3-5 times/week"){
-            mCalorieIntake=(mBMR!!.toInt()*1.55).roundToInt().toString()
-        }
-        else if (mActivityLevel=="Very Active 6-7 days/wk"){
-            mCalorieIntake=(mBMR!!.toInt()*1.725).roundToInt().toString()
-        }
-        else if (mActivityLevel=="Extremely active (intense exercise/physical job)"){
-            mCalorieIntake=(mBMR!!.toInt()*1.9).roundToInt().toString()
-        }
-    }
-
     override fun detailsCallback() {
-        currPage = "Main"
-
+        mViewModel!!.setCurrPage("Main")
         displayButtonFragment()
-
         updateHeader()
     }
 
     override fun showDetailsCallback() {
+        mViewModel!!.setCurrPage("Main")
         displayButtonFragment()
     }
 
@@ -305,16 +235,18 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
             displayBMIFragment()
         } else if (data == "Main") {
             currPage = "Main"
+            displayButtonFragment()
         }
+        mViewModel!!.setCurrPage(currPage)
     }
 
     override fun bmiCallback() {
-        currPage = "Main"
+        mViewModel!!.setCurrPage("Main")
         displayButtonFragment()
     }
 
     override fun weatherCallback() {
-        currPage = "Main"
+        mViewModel!!.setCurrPage("Main")
         displayButtonFragment()
     }
 

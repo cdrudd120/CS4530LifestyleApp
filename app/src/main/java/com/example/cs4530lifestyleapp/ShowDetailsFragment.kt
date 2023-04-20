@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import java.lang.ClassCastException
 
 class ShowDetailsFragment : Fragment(), View.OnClickListener{
-    private var mDetailsViewModel: DetailsViewModel? = null
+    private lateinit var mDetailsViewModel: DetailsViewModel
 
     private var tvFirstName: TextView? = null
     private var tvLastName: TextView? = null
@@ -45,7 +45,7 @@ class ShowDetailsFragment : Fragment(), View.OnClickListener{
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_show_details, container, false)
 
-        mDetailsViewModel = ViewModelProvider(this)[DetailsViewModel::class.java]
+        mDetailsViewModel = ViewModelProvider(requireActivity())[DetailsViewModel::class.java]
         mDetailsViewModel!!.data.observe(viewLifecycleOwner, dataObserver)
 
         //Get the text views

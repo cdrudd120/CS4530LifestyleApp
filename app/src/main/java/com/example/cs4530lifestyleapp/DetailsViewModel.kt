@@ -1,23 +1,31 @@
 package com.example.cs4530lifestyleapp
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.*
 
-class DetailsViewModel(application: Application) : AndroidViewModel(application) {
-    private val detailsData: MutableLiveData<DetailsData>
-    private val repository: Repository
+class DetailsViewModel(repository: Repository) : ViewModel(){
+    private val detailsData: LiveData<DetailsData> = repository.detailsData
 
-    fun setDetailsData(data: Array<String?>) {
+    private val repository: Repository = repository
+
+    fun setDetailsData(data: DetailsData) {
         repository.setDetailsData(data)
+    }
+
+    fun setCurrPage(data: String?) {
+        repository.setCurrPage(data)
     }
 
     val data: LiveData<DetailsData>
         get() = detailsData
 
-    init {
-        repository = Repository.getInstance(application)
-        detailsData = repository.detailsData
+}
+
+class DetailsViewModelFactory(private val repository: Repository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(DetailsViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return DetailsViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
