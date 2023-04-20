@@ -4,11 +4,20 @@ import androidx.lifecycle.*
 
 class DetailsViewModel(repository: Repository) : ViewModel(){
     private val detailsData: LiveData<DetailsData> = repository.detailsData
+    private val weatherData: LiveData<WeatherData> = repository.weatherData
 
     private val repository: Repository = repository
 
     fun setDetailsData(data: DetailsData) {
         repository.setDetailsData(data)
+    }
+
+    fun fetchWeather() {
+        repository.fetchWeatherData()
+    }
+
+    fun updateWeatherData(lat: String?, lon: String?) {
+        repository.updateWeatherData(lat, lon)
     }
 
     fun setCurrPage(data: String?) {
@@ -17,6 +26,9 @@ class DetailsViewModel(repository: Repository) : ViewModel(){
 
     val data: LiveData<DetailsData>
         get() = detailsData
+
+    val wData: LiveData<WeatherData>
+        get() = weatherData
 
 }
 

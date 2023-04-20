@@ -148,20 +148,15 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
                 Toast.makeText(this, "Sorry, can't get location.", Toast.LENGTH_SHORT)
             }
             else {
-                latitude = it.latitude.toString()
-                longitude = it.longitude.toString()
+                mViewModel.updateWeatherData(it.latitude.toString(), it.longitude.toString())
             }
         }
     }
 
     private fun displayWeatherFragment() {
         killFragment()
-        val weatherFragment = WeatherFragment()
         getLocation()
-        val sentData = Bundle()
-        sentData.putString("LAT", latitude)
-        sentData.putString("LONG", longitude)
-        weatherFragment.arguments = sentData
+        val weatherFragment = WeatherFragment()
 
         val fTrans = supportFragmentManager.beginTransaction()
         fTrans.replace(R.id.fl_frag_container, weatherFragment, "main_tag")

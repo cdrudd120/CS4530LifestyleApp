@@ -10,8 +10,11 @@ import kotlin.math.roundToInt
 
 class Repository private constructor(dao: DetailsDao) {
     val detailsData = MutableLiveData<DetailsData>()
+    val weatherData = MutableLiveData<WeatherData>()
 
+    private val mFetchWeather: FetchWeather = FetchWeather()
     private var details: DetailsData? = null
+    private var weather: WeatherData = WeatherData()
     private var mDao: DetailsDao = dao
 
     fun setDetailsData(data: DetailsData) {
@@ -23,10 +26,28 @@ class Repository private constructor(dao: DetailsDao) {
         }
     }
 
+    fun updateWeatherData(lat: String?, lon: String?) {
+        weather.latitude = lat
+        weather.longitude = lon
+    }
+
+    fun setWeatherData(data: WeatherData) {
+        weatherData.postValue(data)
+    }
+
     fun setCurrPage(data: String?) {
         if (details != null) {
             details!!.currPage = data
         }
+    }
+
+    fun fetchWeatherData() {
+        mFetchWeather.execute(
+            weather.latitude,
+            weather.longitude,
+            weather.defaultLocation,
+            this
+        )
     }
 
     @WorkerThread
