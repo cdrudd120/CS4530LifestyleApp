@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -138,25 +139,23 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
             != PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
             !=PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "We need location permission.", Toast.LENGTH_SHORT)
-                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 100)
+            Toast.makeText(this, "We need location permission.", Toast.LENGTH_SHORT)
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 100)
         }
 
-        val location = fusedLocationProviderClient.lastLocation
-        location.addOnSuccessListener {
-            if(it == null) {
-                Toast.makeText(this, "Sorry, can't get location.", Toast.LENGTH_SHORT)
+        fusedLocationProviderClient.lastLocation
+            .addOnSuccessListener { location : Location? ->
+                if (location == null) {
+                    Toast.makeText(this, "Sorry, can't get location.", Toast.LENGTH_SHORT)
+                } else {
+                    latitude = location.latitude.toString()
+                    longitude = location.longitude.toString()
+                }
             }
-            else {
-                latitude = it.latitude.toString()
-                longitude = it.longitude.toString()
-            }
-        }
     }
 
     private fun displayWeatherFragment() {
         killFragment()
-        getLocation()
         val weatherFragment = WeatherFragment()
 
         val fTrans = supportFragmentManager.beginTransaction()
