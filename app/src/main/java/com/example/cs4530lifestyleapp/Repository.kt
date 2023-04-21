@@ -1,5 +1,6 @@
 package com.example.cs4530lifestyleapp
 
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.annotation.WorkerThread
 import kotlinx.coroutines.CoroutineScope
@@ -12,10 +13,12 @@ class Repository private constructor(dao: DetailsDao) {
     val detailsData = MutableLiveData<DetailsData>()
     val weatherData = MutableLiveData<WeatherData>()
 
-    private val mFetchWeather: FetchWeather = FetchWeather()
     private var details: DetailsData? = null
-    private var weather: WeatherData = WeatherData()
+    private var mLocation: String? = null
     private var mDao: DetailsDao = dao
+    private var defaultLoc: Boolean = false
+
+    private var weatherJson: String? = null
 
     fun setDetailsData(data: DetailsData) {
         mScope.launch(Dispatchers.IO){
@@ -26,28 +29,42 @@ class Repository private constructor(dao: DetailsDao) {
         }
     }
 
-    fun updateWeatherData(lat: String?, lon: String?) {
-        weather.latitude = lat
-        weather.longitude = lon
+    fun setWeatherLocation(location: String) {
+        mLocation = location
+        defaultLoc = false
+
+        mScope.launch(Dispatchers.IO){
+            //fetch data on a worker thread
+            fetchAndParseWeatherData(location)
+
+            // After the suspend function returns, Update the View THEN insert into db
+            if(weatherJson != null) {
+                weatherData.postValue(JSONWeatherUtils.getWeatherData(weatherJson, defaultLoc))
+            }
+        }
     }
 
-    fun setWeatherData(data: WeatherData) {
-        weatherData.postValue(data)
+    @WorkerThread
+    suspend fun fetchAndParseWeatherData(location: String) {
+        var weatherDataURL = NetworkUtils.buildURLFromString(location)
+        if(weatherDataURL != null) {
+            var jsonWeatherData: String? = null
+            try {
+                jsonWeatherData = NetworkUtils.getDataFromURL(weatherDataURL)
+            } catch (e: Exception) {
+                defaultLoc = true
+                fetchAndParseWeatherData("Salt&Lake&City,us")
+            }
+            if (jsonWeatherData != null) {
+                weatherJson = jsonWeatherData
+            }
+        }
     }
 
     fun setCurrPage(data: String?) {
         if (details != null) {
             details!!.currPage = data
         }
-    }
-
-    fun fetchWeatherData() {
-        mFetchWeather.execute(
-            weather.latitude,
-            weather.longitude,
-            weather.defaultLocation,
-            this
-        )
     }
 
     @WorkerThread

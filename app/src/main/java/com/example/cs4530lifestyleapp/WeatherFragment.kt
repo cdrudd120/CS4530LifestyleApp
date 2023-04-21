@@ -34,6 +34,7 @@ class WeatherFragment: Fragment(), View.OnClickListener{
     private var mWindSpeed: TextView? = null
     private var mSunrise: TextView? = null
     private var mSunset: TextView? = null
+    private var mLocation: TextView? = null
 
     private var btnBack: Button? = null
 
@@ -73,12 +74,17 @@ class WeatherFragment: Fragment(), View.OnClickListener{
         mWindSpeed = view.findViewById(R.id.windSpeed) as TextView
         mSunrise = view.findViewById(R.id.sunrise) as TextView
         mSunset = view.findViewById(R.id.sunset) as TextView
+        mLocation = view.findViewById(R.id.location) as TextView
 
         btnBack = view.findViewById(R.id.buttonBack) as Button
 
         btnBack!!.setOnClickListener(this)
 
-        mDetailsViewModel.fetchWeather()
+        if (mDetailsViewModel.data.value != null && mDetailsViewModel.data.value!!.location != null) {
+            mDetailsViewModel.setWeatherLocation(mDetailsViewModel.data.value!!.location!!.replace(' ', '&'))
+        } else {
+            mDetailsViewModel.setWeatherLocation("")
+        }
         return view
     }
 
@@ -104,5 +110,10 @@ class WeatherFragment: Fragment(), View.OnClickListener{
         mWindSpeed!!.setText(wData.mWindSpeed)
         mSunrise!!.setText(wData.mSunrise)
         mSunset!!.setText(wData.mSunset)
+        if (wData.mDefaultLoc) {
+            mLocation!!.setText("Invalid Location, showing weather data for Salt Lake City,US")
+        } else {
+            mLocation!!.setText("Location: " + mDetailsViewModel.data.value!!.location!!)
+        }
     }
 }

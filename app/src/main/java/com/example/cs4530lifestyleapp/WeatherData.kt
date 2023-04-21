@@ -12,7 +12,5 @@ class WeatherData {
     var mWindSpeed: String? = null
     var mSunrise: String? = null
     var mSunset: String? = null
-    var latitude: String? = null
-    var longitude: String? = null
-    var defaultLocation:String = "Salt&Lake&City,us"
+    var mDefaultLoc: Boolean = false
 }

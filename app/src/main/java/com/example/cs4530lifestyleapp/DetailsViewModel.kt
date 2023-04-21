@@ -12,12 +12,9 @@ class DetailsViewModel(repository: Repository) : ViewModel(){
         repository.setDetailsData(data)
     }
 
-    fun fetchWeather() {
-        repository.fetchWeatherData()
-    }
 
-    fun updateWeatherData(lat: String?, lon: String?) {
-        repository.updateWeatherData(lat, lon)
+    fun setWeatherLocation(location: String) {
+        repository.setWeatherLocation(location)
     }
 
     fun setCurrPage(data: String?) {

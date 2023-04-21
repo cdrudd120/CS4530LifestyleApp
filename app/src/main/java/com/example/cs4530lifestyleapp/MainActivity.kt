@@ -148,7 +148,8 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
                 Toast.makeText(this, "Sorry, can't get location.", Toast.LENGTH_SHORT)
             }
             else {
-                mViewModel.updateWeatherData(it.latitude.toString(), it.longitude.toString())
+                latitude = it.latitude.toString()
+                longitude = it.longitude.toString()
             }
         }
     }
