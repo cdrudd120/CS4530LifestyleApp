@@ -61,12 +61,6 @@ class Repository private constructor(dao: DetailsDao) {
         }
     }
 
-    fun setCurrPage(data: String?) {
-        if (details != null) {
-            details!!.currPage = data
-        }
-    }
-
     @WorkerThread
     suspend fun parseDetails(data: DetailsData) {
         var d = DetailsData()

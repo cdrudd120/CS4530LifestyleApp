@@ -17,10 +17,6 @@ class DetailsViewModel(repository: Repository) : ViewModel(){
         repository.setWeatherLocation(location)
     }
 
-    fun setCurrPage(data: String?) {
-        repository.setCurrPage(data)
-    }
-
     val data: LiveData<DetailsData>
         get() = detailsData
 

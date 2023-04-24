@@ -18,5 +18,4 @@ class DetailsData() {
     var activityLevel: String? = null
     var bmr: String?=null
     var caloricIntake: String?=null
-    var currPage: String?=null
 }

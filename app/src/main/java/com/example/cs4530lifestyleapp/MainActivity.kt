@@ -86,11 +86,20 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
                 mActivityLevel = detailsData.activityLevel
                 mBMR=detailsData.bmr
                 mCalorieIntake=detailsData.caloricIntake
-                currPage = detailsData.currPage
-                buttonsCallback(currPage)
                 updateHeader()
             }
         }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("PAGE", currPage)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        currPage = savedInstanceState!!.getString("PAGE")
+        buttonsCallback(currPage)
+    }
 
     private fun displayButtonFragment() {
         killFragment()
@@ -203,13 +212,13 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
     }
 
     override fun detailsCallback() {
-        mViewModel!!.setCurrPage("Main")
+        currPage = "Details"
         displayButtonFragment()
         updateHeader()
     }
 
     override fun showDetailsCallback() {
-        mViewModel!!.setCurrPage("Main")
+        currPage = "Details"
         displayButtonFragment()
     }
 
@@ -232,16 +241,15 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
             currPage = "Main"
             displayButtonFragment()
         }
-        mViewModel!!.setCurrPage(currPage)
     }
 
     override fun bmiCallback() {
-        mViewModel!!.setCurrPage("Main")
+        currPage = "Details"
         displayButtonFragment()
     }
 
     override fun weatherCallback() {
-        mViewModel!!.setCurrPage("Main")
+        currPage = "Details"
         displayButtonFragment()
     }
 
