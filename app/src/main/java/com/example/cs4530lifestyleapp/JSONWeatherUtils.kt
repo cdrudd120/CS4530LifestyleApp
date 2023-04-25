@@ -28,18 +28,18 @@ object JSONWeatherUtils {
         }
         weatherData.mDescription = myMap.getValue("\"description\"").removeSurrounding("\"")
         var temperatureObj = jsonObj.getJSONObject("main")
-        weatherData.mTemperature = "Temperature: " + (temperatureObj.getString("temp").toDouble() - 273.15).roundToInt().toString() + "C"
-        weatherData.mFeelsLike = "Feels Like: " + (temperatureObj.getString("feels_like").toDouble() - 273.15).roundToInt().toString() + "C"
-        weatherData.mMin = "Min: " + (temperatureObj.getString("temp_min").toDouble() - 273.15).roundToInt().toString() + "C"
-        weatherData.mMax = "Max: " + (temperatureObj.getString("temp_max").toDouble() - 273.15).roundToInt().toString() + "C"
-        weatherData.mHumidity = "Humidity: " + temperatureObj.getString("humidity")
-        weatherData.mWindSpeed = "Wind Speed: " + jsonObj.getJSONObject("wind").getString("speed")
+        weatherData.mTemperature = "" + (temperatureObj.getString("temp").toDouble() - 273.15).roundToInt().toString() + "C"
+        weatherData.mFeelsLike = "" + (temperatureObj.getString("feels_like").toDouble() - 273.15).roundToInt().toString() + "C"
+        weatherData.mMin = "" + (temperatureObj.getString("temp_min").toDouble() - 273.15).roundToInt().toString() + "C"
+        weatherData.mMax = "" + (temperatureObj.getString("temp_max").toDouble() - 273.15).roundToInt().toString() + "C"
+        weatherData.mHumidity = "" + temperatureObj.getString("humidity")
+        weatherData.mWindSpeed = "" + jsonObj.getJSONObject("wind").getString("speed")
 
         val date1 = java.util.Date(jsonObj.getJSONObject("sys").getString("sunrise").toLong() * 1000)
-        weatherData.mSunrise = "Sunrise: " + date1
+        weatherData.mSunrise = "" + date1
 
         val date2 = java.util.Date(jsonObj.getJSONObject("sys").getString("sunset").toLong() * 1000)
-        weatherData.mSunset = "Sunset: " + date2
+        weatherData.mSunset = "" + date2
 
         return weatherData
     }

@@ -106,14 +106,15 @@ class WeatherFragment: Fragment(), View.OnClickListener{
         mTemperature!!.setText(wData.mTemperature)
         mMin!!.setText(wData.mMin)
         mMax!!.setText(wData.mMax)
+        mFeelsLike!!.setText(wData.mFeelsLike)
         mHumidity!!.setText(wData.mHumidity)
         mWindSpeed!!.setText(wData.mWindSpeed)
         mSunrise!!.setText(wData.mSunrise)
         mSunset!!.setText(wData.mSunset)
         if (wData.mDefaultLoc) {
-            mLocation!!.setText("Invalid Location, showing weather data for Salt Lake City,US")
+            mLocation!!.setText("Salt Lake City,US (Invalid)")
         } else {
-            mLocation!!.setText("Location: " + mDetailsViewModel.data.value!!.location!!)
+            mLocation!!.setText("" + mDetailsViewModel.data.value!!.location!!)
         }
     }
 }
