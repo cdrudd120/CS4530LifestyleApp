@@ -66,6 +66,8 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
 //        mDetailsViewModel = ViewModelProvider(this)[ViewModel::class.java]
         mViewModel!!.data.observe(this, dataObserver)
 
+        currPage = "Main"
+
         displayButtonFragment()
     }
 
@@ -212,13 +214,13 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
     }
 
     override fun detailsCallback() {
-        currPage = "Details"
+        currPage = "Main"
         displayButtonFragment()
         updateHeader()
     }
 
     override fun showDetailsCallback() {
-        currPage = "Details"
+        currPage = "Main"
         displayButtonFragment()
     }
 
@@ -244,12 +246,12 @@ class MainActivity : AppCompatActivity(), DetailsPassing, ListPassing, ShowDetai
     }
 
     override fun bmiCallback() {
-        currPage = "Details"
+        currPage = "Main"
         displayButtonFragment()
     }
 
     override fun weatherCallback() {
-        currPage = "Details"
+        currPage = "Main"
         displayButtonFragment()
     }
 
